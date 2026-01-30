@@ -1,0 +1,3361 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>Yikes.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// Yikes.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct CircleGradient {
+	float innerRadius;
+	float outerRadius;
+	vec4 innerColor;
+	vec4 outerColor;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient);
+bool RectangleCheck(vec2 point, Rectangle rec);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float i = 0.0;
+
+	float i_v1 = 1.0;
+
+	float i_v2 = 2.0;
+
+	float i_v3 = 3.0;
+
+	float i_v4 = 4.0;
+
+	float i_v5 = 5.0;
+
+	float i_v6 = 6.0;
+
+	float i_v7 = 7.0;
+
+	float i_v8 = 8.0;
+
+	float i_v9 = 9.0;
+
+	float i_v10 = 10.0;
+
+	float circleAmt = 100.0;
+
+	float moveSpeed = 20.0;
+
+	float loopWidth = iResolution.x/(circleAmt*0.8999999761581421);
+
+	float circleSize = 20.0;
+
+	float movement = mod((iTime*moveSpeed), loopWidth)-loopWidth-circleSize;
+
+	float i_v11 = 0.0;
+
+	float iMovement = movement+i_v11*loopWidth;
+
+	float yPos = (iResolution.y/2.0)+sin(iMovement*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v12 = 1.0;
+
+	float iMovement_v1 = movement+i_v12*loopWidth;
+
+	float yPos_v1 = (iResolution.y/2.0)+sin(iMovement_v1*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v13 = 2.0;
+
+	float iMovement_v2 = movement+i_v13*loopWidth;
+
+	float yPos_v2 = (iResolution.y/2.0)+sin(iMovement_v2*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v14 = 3.0;
+
+	float iMovement_v3 = movement+i_v14*loopWidth;
+
+	float yPos_v3 = (iResolution.y/2.0)+sin(iMovement_v3*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v15 = 4.0;
+
+	float iMovement_v4 = movement+i_v15*loopWidth;
+
+	float yPos_v4 = (iResolution.y/2.0)+sin(iMovement_v4*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v16 = 5.0;
+
+	float iMovement_v5 = movement+i_v16*loopWidth;
+
+	float yPos_v5 = (iResolution.y/2.0)+sin(iMovement_v5*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v17 = 6.0;
+
+	float iMovement_v6 = movement+i_v17*loopWidth;
+
+	float yPos_v6 = (iResolution.y/2.0)+sin(iMovement_v6*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v18 = 7.0;
+
+	float iMovement_v7 = movement+i_v18*loopWidth;
+
+	float yPos_v7 = (iResolution.y/2.0)+sin(iMovement_v7*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v19 = 8.0;
+
+	float iMovement_v8 = movement+i_v19*loopWidth;
+
+	float yPos_v8 = (iResolution.y/2.0)+sin(iMovement_v8*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v20 = 9.0;
+
+	float iMovement_v9 = movement+i_v20*loopWidth;
+
+	float yPos_v9 = (iResolution.y/2.0)+sin(iMovement_v9*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v21 = 10.0;
+
+	float iMovement_v10 = movement+i_v21*loopWidth;
+
+	float yPos_v10 = (iResolution.y/2.0)+sin(iMovement_v10*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v22 = 11.0;
+
+	float iMovement_v11 = movement+i_v22*loopWidth;
+
+	float yPos_v11 = (iResolution.y/2.0)+sin(iMovement_v11*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v23 = 12.0;
+
+	float iMovement_v12 = movement+i_v23*loopWidth;
+
+	float yPos_v12 = (iResolution.y/2.0)+sin(iMovement_v12*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v24 = 13.0;
+
+	float iMovement_v13 = movement+i_v24*loopWidth;
+
+	float yPos_v13 = (iResolution.y/2.0)+sin(iMovement_v13*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v25 = 14.0;
+
+	float iMovement_v14 = movement+i_v25*loopWidth;
+
+	float yPos_v14 = (iResolution.y/2.0)+sin(iMovement_v14*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v26 = 15.0;
+
+	float iMovement_v15 = movement+i_v26*loopWidth;
+
+	float yPos_v15 = (iResolution.y/2.0)+sin(iMovement_v15*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v27 = 16.0;
+
+	float iMovement_v16 = movement+i_v27*loopWidth;
+
+	float yPos_v16 = (iResolution.y/2.0)+sin(iMovement_v16*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v28 = 17.0;
+
+	float iMovement_v17 = movement+i_v28*loopWidth;
+
+	float yPos_v17 = (iResolution.y/2.0)+sin(iMovement_v17*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v29 = 18.0;
+
+	float iMovement_v18 = movement+i_v29*loopWidth;
+
+	float yPos_v18 = (iResolution.y/2.0)+sin(iMovement_v18*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v30 = 19.0;
+
+	float iMovement_v19 = movement+i_v30*loopWidth;
+
+	float yPos_v19 = (iResolution.y/2.0)+sin(iMovement_v19*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v31 = 20.0;
+
+	float iMovement_v20 = movement+i_v31*loopWidth;
+
+	float yPos_v20 = (iResolution.y/2.0)+sin(iMovement_v20*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v32 = 21.0;
+
+	float iMovement_v21 = movement+i_v32*loopWidth;
+
+	float yPos_v21 = (iResolution.y/2.0)+sin(iMovement_v21*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v33 = 22.0;
+
+	float iMovement_v22 = movement+i_v33*loopWidth;
+
+	float yPos_v22 = (iResolution.y/2.0)+sin(iMovement_v22*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v34 = 23.0;
+
+	float iMovement_v23 = movement+i_v34*loopWidth;
+
+	float yPos_v23 = (iResolution.y/2.0)+sin(iMovement_v23*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v35 = 24.0;
+
+	float iMovement_v24 = movement+i_v35*loopWidth;
+
+	float yPos_v24 = (iResolution.y/2.0)+sin(iMovement_v24*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v36 = 25.0;
+
+	float iMovement_v25 = movement+i_v36*loopWidth;
+
+	float yPos_v25 = (iResolution.y/2.0)+sin(iMovement_v25*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v37 = 26.0;
+
+	float iMovement_v26 = movement+i_v37*loopWidth;
+
+	float yPos_v26 = (iResolution.y/2.0)+sin(iMovement_v26*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v38 = 27.0;
+
+	float iMovement_v27 = movement+i_v38*loopWidth;
+
+	float yPos_v27 = (iResolution.y/2.0)+sin(iMovement_v27*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v39 = 28.0;
+
+	float iMovement_v28 = movement+i_v39*loopWidth;
+
+	float yPos_v28 = (iResolution.y/2.0)+sin(iMovement_v28*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v40 = 29.0;
+
+	float iMovement_v29 = movement+i_v40*loopWidth;
+
+	float yPos_v29 = (iResolution.y/2.0)+sin(iMovement_v29*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v41 = 30.0;
+
+	float iMovement_v30 = movement+i_v41*loopWidth;
+
+	float yPos_v30 = (iResolution.y/2.0)+sin(iMovement_v30*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v42 = 31.0;
+
+	float iMovement_v31 = movement+i_v42*loopWidth;
+
+	float yPos_v31 = (iResolution.y/2.0)+sin(iMovement_v31*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v43 = 32.0;
+
+	float iMovement_v32 = movement+i_v43*loopWidth;
+
+	float yPos_v32 = (iResolution.y/2.0)+sin(iMovement_v32*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v44 = 33.0;
+
+	float iMovement_v33 = movement+i_v44*loopWidth;
+
+	float yPos_v33 = (iResolution.y/2.0)+sin(iMovement_v33*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v45 = 34.0;
+
+	float iMovement_v34 = movement+i_v45*loopWidth;
+
+	float yPos_v34 = (iResolution.y/2.0)+sin(iMovement_v34*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v46 = 35.0;
+
+	float iMovement_v35 = movement+i_v46*loopWidth;
+
+	float yPos_v35 = (iResolution.y/2.0)+sin(iMovement_v35*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v47 = 36.0;
+
+	float iMovement_v36 = movement+i_v47*loopWidth;
+
+	float yPos_v36 = (iResolution.y/2.0)+sin(iMovement_v36*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v48 = 37.0;
+
+	float iMovement_v37 = movement+i_v48*loopWidth;
+
+	float yPos_v37 = (iResolution.y/2.0)+sin(iMovement_v37*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v49 = 38.0;
+
+	float iMovement_v38 = movement+i_v49*loopWidth;
+
+	float yPos_v38 = (iResolution.y/2.0)+sin(iMovement_v38*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v50 = 39.0;
+
+	float iMovement_v39 = movement+i_v50*loopWidth;
+
+	float yPos_v39 = (iResolution.y/2.0)+sin(iMovement_v39*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v51 = 40.0;
+
+	float iMovement_v40 = movement+i_v51*loopWidth;
+
+	float yPos_v40 = (iResolution.y/2.0)+sin(iMovement_v40*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v52 = 41.0;
+
+	float iMovement_v41 = movement+i_v52*loopWidth;
+
+	float yPos_v41 = (iResolution.y/2.0)+sin(iMovement_v41*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v53 = 42.0;
+
+	float iMovement_v42 = movement+i_v53*loopWidth;
+
+	float yPos_v42 = (iResolution.y/2.0)+sin(iMovement_v42*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v54 = 43.0;
+
+	float iMovement_v43 = movement+i_v54*loopWidth;
+
+	float yPos_v43 = (iResolution.y/2.0)+sin(iMovement_v43*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v55 = 44.0;
+
+	float iMovement_v44 = movement+i_v55*loopWidth;
+
+	float yPos_v44 = (iResolution.y/2.0)+sin(iMovement_v44*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v56 = 45.0;
+
+	float iMovement_v45 = movement+i_v56*loopWidth;
+
+	float yPos_v45 = (iResolution.y/2.0)+sin(iMovement_v45*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v57 = 46.0;
+
+	float iMovement_v46 = movement+i_v57*loopWidth;
+
+	float yPos_v46 = (iResolution.y/2.0)+sin(iMovement_v46*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v58 = 47.0;
+
+	float iMovement_v47 = movement+i_v58*loopWidth;
+
+	float yPos_v47 = (iResolution.y/2.0)+sin(iMovement_v47*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v59 = 48.0;
+
+	float iMovement_v48 = movement+i_v59*loopWidth;
+
+	float yPos_v48 = (iResolution.y/2.0)+sin(iMovement_v48*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v60 = 49.0;
+
+	float iMovement_v49 = movement+i_v60*loopWidth;
+
+	float yPos_v49 = (iResolution.y/2.0)+sin(iMovement_v49*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v61 = 50.0;
+
+	float iMovement_v50 = movement+i_v61*loopWidth;
+
+	float yPos_v50 = (iResolution.y/2.0)+sin(iMovement_v50*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v62 = 51.0;
+
+	float iMovement_v51 = movement+i_v62*loopWidth;
+
+	float yPos_v51 = (iResolution.y/2.0)+sin(iMovement_v51*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v63 = 52.0;
+
+	float iMovement_v52 = movement+i_v63*loopWidth;
+
+	float yPos_v52 = (iResolution.y/2.0)+sin(iMovement_v52*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v64 = 53.0;
+
+	float iMovement_v53 = movement+i_v64*loopWidth;
+
+	float yPos_v53 = (iResolution.y/2.0)+sin(iMovement_v53*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v65 = 54.0;
+
+	float iMovement_v54 = movement+i_v65*loopWidth;
+
+	float yPos_v54 = (iResolution.y/2.0)+sin(iMovement_v54*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v66 = 55.0;
+
+	float iMovement_v55 = movement+i_v66*loopWidth;
+
+	float yPos_v55 = (iResolution.y/2.0)+sin(iMovement_v55*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v67 = 56.0;
+
+	float iMovement_v56 = movement+i_v67*loopWidth;
+
+	float yPos_v56 = (iResolution.y/2.0)+sin(iMovement_v56*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v68 = 57.0;
+
+	float iMovement_v57 = movement+i_v68*loopWidth;
+
+	float yPos_v57 = (iResolution.y/2.0)+sin(iMovement_v57*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v69 = 58.0;
+
+	float iMovement_v58 = movement+i_v69*loopWidth;
+
+	float yPos_v58 = (iResolution.y/2.0)+sin(iMovement_v58*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v70 = 59.0;
+
+	float iMovement_v59 = movement+i_v70*loopWidth;
+
+	float yPos_v59 = (iResolution.y/2.0)+sin(iMovement_v59*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v71 = 60.0;
+
+	float iMovement_v60 = movement+i_v71*loopWidth;
+
+	float yPos_v60 = (iResolution.y/2.0)+sin(iMovement_v60*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v72 = 61.0;
+
+	float iMovement_v61 = movement+i_v72*loopWidth;
+
+	float yPos_v61 = (iResolution.y/2.0)+sin(iMovement_v61*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v73 = 62.0;
+
+	float iMovement_v62 = movement+i_v73*loopWidth;
+
+	float yPos_v62 = (iResolution.y/2.0)+sin(iMovement_v62*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v74 = 63.0;
+
+	float iMovement_v63 = movement+i_v74*loopWidth;
+
+	float yPos_v63 = (iResolution.y/2.0)+sin(iMovement_v63*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v75 = 64.0;
+
+	float iMovement_v64 = movement+i_v75*loopWidth;
+
+	float yPos_v64 = (iResolution.y/2.0)+sin(iMovement_v64*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v76 = 65.0;
+
+	float iMovement_v65 = movement+i_v76*loopWidth;
+
+	float yPos_v65 = (iResolution.y/2.0)+sin(iMovement_v65*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v77 = 66.0;
+
+	float iMovement_v66 = movement+i_v77*loopWidth;
+
+	float yPos_v66 = (iResolution.y/2.0)+sin(iMovement_v66*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v78 = 67.0;
+
+	float iMovement_v67 = movement+i_v78*loopWidth;
+
+	float yPos_v67 = (iResolution.y/2.0)+sin(iMovement_v67*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v79 = 68.0;
+
+	float iMovement_v68 = movement+i_v79*loopWidth;
+
+	float yPos_v68 = (iResolution.y/2.0)+sin(iMovement_v68*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v80 = 69.0;
+
+	float iMovement_v69 = movement+i_v80*loopWidth;
+
+	float yPos_v69 = (iResolution.y/2.0)+sin(iMovement_v69*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v81 = 70.0;
+
+	float iMovement_v70 = movement+i_v81*loopWidth;
+
+	float yPos_v70 = (iResolution.y/2.0)+sin(iMovement_v70*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v82 = 71.0;
+
+	float iMovement_v71 = movement+i_v82*loopWidth;
+
+	float yPos_v71 = (iResolution.y/2.0)+sin(iMovement_v71*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v83 = 72.0;
+
+	float iMovement_v72 = movement+i_v83*loopWidth;
+
+	float yPos_v72 = (iResolution.y/2.0)+sin(iMovement_v72*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v84 = 73.0;
+
+	float iMovement_v73 = movement+i_v84*loopWidth;
+
+	float yPos_v73 = (iResolution.y/2.0)+sin(iMovement_v73*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v85 = 74.0;
+
+	float iMovement_v74 = movement+i_v85*loopWidth;
+
+	float yPos_v74 = (iResolution.y/2.0)+sin(iMovement_v74*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v86 = 75.0;
+
+	float iMovement_v75 = movement+i_v86*loopWidth;
+
+	float yPos_v75 = (iResolution.y/2.0)+sin(iMovement_v75*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v87 = 76.0;
+
+	float iMovement_v76 = movement+i_v87*loopWidth;
+
+	float yPos_v76 = (iResolution.y/2.0)+sin(iMovement_v76*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v88 = 77.0;
+
+	float iMovement_v77 = movement+i_v88*loopWidth;
+
+	float yPos_v77 = (iResolution.y/2.0)+sin(iMovement_v77*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v89 = 78.0;
+
+	float iMovement_v78 = movement+i_v89*loopWidth;
+
+	float yPos_v78 = (iResolution.y/2.0)+sin(iMovement_v78*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v90 = 79.0;
+
+	float iMovement_v79 = movement+i_v90*loopWidth;
+
+	float yPos_v79 = (iResolution.y/2.0)+sin(iMovement_v79*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v91 = 80.0;
+
+	float iMovement_v80 = movement+i_v91*loopWidth;
+
+	float yPos_v80 = (iResolution.y/2.0)+sin(iMovement_v80*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v92 = 81.0;
+
+	float iMovement_v81 = movement+i_v92*loopWidth;
+
+	float yPos_v81 = (iResolution.y/2.0)+sin(iMovement_v81*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v93 = 82.0;
+
+	float iMovement_v82 = movement+i_v93*loopWidth;
+
+	float yPos_v82 = (iResolution.y/2.0)+sin(iMovement_v82*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v94 = 83.0;
+
+	float iMovement_v83 = movement+i_v94*loopWidth;
+
+	float yPos_v83 = (iResolution.y/2.0)+sin(iMovement_v83*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v95 = 84.0;
+
+	float iMovement_v84 = movement+i_v95*loopWidth;
+
+	float yPos_v84 = (iResolution.y/2.0)+sin(iMovement_v84*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v96 = 85.0;
+
+	float iMovement_v85 = movement+i_v96*loopWidth;
+
+	float yPos_v85 = (iResolution.y/2.0)+sin(iMovement_v85*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v97 = 86.0;
+
+	float iMovement_v86 = movement+i_v97*loopWidth;
+
+	float yPos_v86 = (iResolution.y/2.0)+sin(iMovement_v86*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v98 = 87.0;
+
+	float iMovement_v87 = movement+i_v98*loopWidth;
+
+	float yPos_v87 = (iResolution.y/2.0)+sin(iMovement_v87*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v99 = 88.0;
+
+	float iMovement_v88 = movement+i_v99*loopWidth;
+
+	float yPos_v88 = (iResolution.y/2.0)+sin(iMovement_v88*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v100 = 89.0;
+
+	float iMovement_v89 = movement+i_v100*loopWidth;
+
+	float yPos_v89 = (iResolution.y/2.0)+sin(iMovement_v89*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v101 = 90.0;
+
+	float iMovement_v90 = movement+i_v101*loopWidth;
+
+	float yPos_v90 = (iResolution.y/2.0)+sin(iMovement_v90*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v102 = 91.0;
+
+	float iMovement_v91 = movement+i_v102*loopWidth;
+
+	float yPos_v91 = (iResolution.y/2.0)+sin(iMovement_v91*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v103 = 92.0;
+
+	float iMovement_v92 = movement+i_v103*loopWidth;
+
+	float yPos_v92 = (iResolution.y/2.0)+sin(iMovement_v92*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v104 = 93.0;
+
+	float iMovement_v93 = movement+i_v104*loopWidth;
+
+	float yPos_v93 = (iResolution.y/2.0)+sin(iMovement_v93*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v105 = 94.0;
+
+	float iMovement_v94 = movement+i_v105*loopWidth;
+
+	float yPos_v94 = (iResolution.y/2.0)+sin(iMovement_v94*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v106 = 95.0;
+
+	float iMovement_v95 = movement+i_v106*loopWidth;
+
+	float yPos_v95 = (iResolution.y/2.0)+sin(iMovement_v95*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v107 = 96.0;
+
+	float iMovement_v96 = movement+i_v107*loopWidth;
+
+	float yPos_v96 = (iResolution.y/2.0)+sin(iMovement_v96*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v108 = 97.0;
+
+	float iMovement_v97 = movement+i_v108*loopWidth;
+
+	float yPos_v97 = (iResolution.y/2.0)+sin(iMovement_v97*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v109 = 98.0;
+
+	float iMovement_v98 = movement+i_v109*loopWidth;
+
+	float yPos_v98 = (iResolution.y/2.0)+sin(iMovement_v98*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v110 = 99.0;
+
+	float iMovement_v99 = movement+i_v110*loopWidth;
+
+	float yPos_v99 = (iResolution.y/2.0)+sin(iMovement_v99*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v111 = 100.0;
+
+	float iMovement_v100 = movement+i_v111*loopWidth;
+
+	float yPos_v100 = (iResolution.y/2.0)+sin(iMovement_v100*0.009999999776482582)*(iResolution.x/4.0);
+
+	float i_v112 = 0.0;
+
+	float i_v113 = 1.0;
+
+	float i_v114 = 2.0;
+
+	float i_v115 = 3.0;
+
+	float i_v116 = 4.0;
+
+	float i_v117 = 5.0;
+
+	float i_v118 = 6.0;
+
+	float i_v119 = 7.0;
+
+	float i_v120 = 8.0;
+
+	float i_v121 = 9.0;
+
+	float i_v122 = 10.0;
+
+	vec2 center = vec2(iResolution.x/2.0, iResolution.y/2.0);
+
+	float i_v123 = 1.0;
+
+	float ringSize = circleSize*10.0;
+
+	float i_v124 = 2.0;
+
+	float ringSize_v1 = circleSize*10.0;
+
+	float i_v125 = 3.0;
+
+	float ringSize_v2 = circleSize*10.0;
+
+	float i_v126 = 4.0;
+
+	float ringSize_v3 = circleSize*10.0;
+
+	float i_v127 = 5.0;
+
+	float ringSize_v4 = circleSize*10.0;
+
+	float i_v128 = 6.0;
+
+	float ringSize_v5 = circleSize*10.0;
+
+	float i_v129 = 7.0;
+
+	float ringSize_v6 = circleSize*10.0;
+
+	float i_v130 = 8.0;
+
+	float ringSize_v7 = circleSize*10.0;
+
+	float i_v131 = 9.0;
+
+	float ringSize_v8 = circleSize*10.0;
+
+	float i_v132 = 10.0;
+
+	float ringSize_v9 = circleSize*10.0;
+
+	float i_v133 = 11.0;
+
+	float ringSize_v10 = circleSize*10.0;
+
+	float i_v134 = 12.0;
+
+	float ringSize_v11 = circleSize*10.0;
+
+	float i_v135 = 13.0;
+
+	float ringSize_v12 = circleSize*10.0;
+
+	float i_v136 = 14.0;
+
+	float ringSize_v13 = circleSize*10.0;
+
+	float i_v137 = 15.0;
+
+	float ringSize_v14 = circleSize*10.0;
+
+	float i_v138 = 16.0;
+
+	float ringSize_v15 = circleSize*10.0;
+
+	float i_v139 = 17.0;
+
+	float ringSize_v16 = circleSize*10.0;
+
+	float i_v140 = 18.0;
+
+	float ringSize_v17 = circleSize*10.0;
+
+	float i_v141 = 19.0;
+
+	float ringSize_v18 = circleSize*10.0;
+
+	float i_v142 = 20.0;
+
+	float ringSize_v19 = circleSize*10.0;
+
+	// Object Declarations
+	Rectangle rect = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v1 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v1+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v2 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v2+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v3 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v3+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v4 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v4+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v5 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v5+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v6 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v6+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v7 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v7+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v8 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v8+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v9 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v9+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Rectangle rect_v10 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v10+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.0, 1.0)
+	);
+
+	Circle c = Circle(
+		circleSize,
+		vec2(iMovement+0.0, yPos+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v1 = Circle(
+		circleSize,
+		vec2(iMovement_v1+0.0, yPos_v1+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v2 = Circle(
+		circleSize,
+		vec2(iMovement_v2+0.0, yPos_v2+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v3 = Circle(
+		circleSize,
+		vec2(iMovement_v3+0.0, yPos_v3+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v4 = Circle(
+		circleSize,
+		vec2(iMovement_v4+0.0, yPos_v4+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v5 = Circle(
+		circleSize,
+		vec2(iMovement_v5+0.0, yPos_v5+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v6 = Circle(
+		circleSize,
+		vec2(iMovement_v6+0.0, yPos_v6+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v7 = Circle(
+		circleSize,
+		vec2(iMovement_v7+0.0, yPos_v7+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v8 = Circle(
+		circleSize,
+		vec2(iMovement_v8+0.0, yPos_v8+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v9 = Circle(
+		circleSize,
+		vec2(iMovement_v9+0.0, yPos_v9+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v10 = Circle(
+		circleSize,
+		vec2(iMovement_v10+0.0, yPos_v10+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v11 = Circle(
+		circleSize,
+		vec2(iMovement_v11+0.0, yPos_v11+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v12 = Circle(
+		circleSize,
+		vec2(iMovement_v12+0.0, yPos_v12+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v13 = Circle(
+		circleSize,
+		vec2(iMovement_v13+0.0, yPos_v13+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v14 = Circle(
+		circleSize,
+		vec2(iMovement_v14+0.0, yPos_v14+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v15 = Circle(
+		circleSize,
+		vec2(iMovement_v15+0.0, yPos_v15+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v16 = Circle(
+		circleSize,
+		vec2(iMovement_v16+0.0, yPos_v16+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v17 = Circle(
+		circleSize,
+		vec2(iMovement_v17+0.0, yPos_v17+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v18 = Circle(
+		circleSize,
+		vec2(iMovement_v18+0.0, yPos_v18+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v19 = Circle(
+		circleSize,
+		vec2(iMovement_v19+0.0, yPos_v19+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v20 = Circle(
+		circleSize,
+		vec2(iMovement_v20+0.0, yPos_v20+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v21 = Circle(
+		circleSize,
+		vec2(iMovement_v21+0.0, yPos_v21+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v22 = Circle(
+		circleSize,
+		vec2(iMovement_v22+0.0, yPos_v22+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v23 = Circle(
+		circleSize,
+		vec2(iMovement_v23+0.0, yPos_v23+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v24 = Circle(
+		circleSize,
+		vec2(iMovement_v24+0.0, yPos_v24+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v25 = Circle(
+		circleSize,
+		vec2(iMovement_v25+0.0, yPos_v25+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v26 = Circle(
+		circleSize,
+		vec2(iMovement_v26+0.0, yPos_v26+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v27 = Circle(
+		circleSize,
+		vec2(iMovement_v27+0.0, yPos_v27+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v28 = Circle(
+		circleSize,
+		vec2(iMovement_v28+0.0, yPos_v28+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v29 = Circle(
+		circleSize,
+		vec2(iMovement_v29+0.0, yPos_v29+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v30 = Circle(
+		circleSize,
+		vec2(iMovement_v30+0.0, yPos_v30+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v31 = Circle(
+		circleSize,
+		vec2(iMovement_v31+0.0, yPos_v31+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v32 = Circle(
+		circleSize,
+		vec2(iMovement_v32+0.0, yPos_v32+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v33 = Circle(
+		circleSize,
+		vec2(iMovement_v33+0.0, yPos_v33+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v34 = Circle(
+		circleSize,
+		vec2(iMovement_v34+0.0, yPos_v34+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v35 = Circle(
+		circleSize,
+		vec2(iMovement_v35+0.0, yPos_v35+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v36 = Circle(
+		circleSize,
+		vec2(iMovement_v36+0.0, yPos_v36+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v37 = Circle(
+		circleSize,
+		vec2(iMovement_v37+0.0, yPos_v37+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v38 = Circle(
+		circleSize,
+		vec2(iMovement_v38+0.0, yPos_v38+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v39 = Circle(
+		circleSize,
+		vec2(iMovement_v39+0.0, yPos_v39+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v40 = Circle(
+		circleSize,
+		vec2(iMovement_v40+0.0, yPos_v40+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v41 = Circle(
+		circleSize,
+		vec2(iMovement_v41+0.0, yPos_v41+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v42 = Circle(
+		circleSize,
+		vec2(iMovement_v42+0.0, yPos_v42+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v43 = Circle(
+		circleSize,
+		vec2(iMovement_v43+0.0, yPos_v43+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v44 = Circle(
+		circleSize,
+		vec2(iMovement_v44+0.0, yPos_v44+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v45 = Circle(
+		circleSize,
+		vec2(iMovement_v45+0.0, yPos_v45+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v46 = Circle(
+		circleSize,
+		vec2(iMovement_v46+0.0, yPos_v46+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v47 = Circle(
+		circleSize,
+		vec2(iMovement_v47+0.0, yPos_v47+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v48 = Circle(
+		circleSize,
+		vec2(iMovement_v48+0.0, yPos_v48+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v49 = Circle(
+		circleSize,
+		vec2(iMovement_v49+0.0, yPos_v49+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v50 = Circle(
+		circleSize,
+		vec2(iMovement_v50+0.0, yPos_v50+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v51 = Circle(
+		circleSize,
+		vec2(iMovement_v51+0.0, yPos_v51+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v52 = Circle(
+		circleSize,
+		vec2(iMovement_v52+0.0, yPos_v52+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v53 = Circle(
+		circleSize,
+		vec2(iMovement_v53+0.0, yPos_v53+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v54 = Circle(
+		circleSize,
+		vec2(iMovement_v54+0.0, yPos_v54+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v55 = Circle(
+		circleSize,
+		vec2(iMovement_v55+0.0, yPos_v55+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v56 = Circle(
+		circleSize,
+		vec2(iMovement_v56+0.0, yPos_v56+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v57 = Circle(
+		circleSize,
+		vec2(iMovement_v57+0.0, yPos_v57+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v58 = Circle(
+		circleSize,
+		vec2(iMovement_v58+0.0, yPos_v58+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v59 = Circle(
+		circleSize,
+		vec2(iMovement_v59+0.0, yPos_v59+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v60 = Circle(
+		circleSize,
+		vec2(iMovement_v60+0.0, yPos_v60+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v61 = Circle(
+		circleSize,
+		vec2(iMovement_v61+0.0, yPos_v61+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v62 = Circle(
+		circleSize,
+		vec2(iMovement_v62+0.0, yPos_v62+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v63 = Circle(
+		circleSize,
+		vec2(iMovement_v63+0.0, yPos_v63+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v64 = Circle(
+		circleSize,
+		vec2(iMovement_v64+0.0, yPos_v64+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v65 = Circle(
+		circleSize,
+		vec2(iMovement_v65+0.0, yPos_v65+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v66 = Circle(
+		circleSize,
+		vec2(iMovement_v66+0.0, yPos_v66+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v67 = Circle(
+		circleSize,
+		vec2(iMovement_v67+0.0, yPos_v67+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v68 = Circle(
+		circleSize,
+		vec2(iMovement_v68+0.0, yPos_v68+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v69 = Circle(
+		circleSize,
+		vec2(iMovement_v69+0.0, yPos_v69+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v70 = Circle(
+		circleSize,
+		vec2(iMovement_v70+0.0, yPos_v70+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v71 = Circle(
+		circleSize,
+		vec2(iMovement_v71+0.0, yPos_v71+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v72 = Circle(
+		circleSize,
+		vec2(iMovement_v72+0.0, yPos_v72+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v73 = Circle(
+		circleSize,
+		vec2(iMovement_v73+0.0, yPos_v73+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v74 = Circle(
+		circleSize,
+		vec2(iMovement_v74+0.0, yPos_v74+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v75 = Circle(
+		circleSize,
+		vec2(iMovement_v75+0.0, yPos_v75+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v76 = Circle(
+		circleSize,
+		vec2(iMovement_v76+0.0, yPos_v76+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v77 = Circle(
+		circleSize,
+		vec2(iMovement_v77+0.0, yPos_v77+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v78 = Circle(
+		circleSize,
+		vec2(iMovement_v78+0.0, yPos_v78+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v79 = Circle(
+		circleSize,
+		vec2(iMovement_v79+0.0, yPos_v79+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v80 = Circle(
+		circleSize,
+		vec2(iMovement_v80+0.0, yPos_v80+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v81 = Circle(
+		circleSize,
+		vec2(iMovement_v81+0.0, yPos_v81+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v82 = Circle(
+		circleSize,
+		vec2(iMovement_v82+0.0, yPos_v82+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v83 = Circle(
+		circleSize,
+		vec2(iMovement_v83+0.0, yPos_v83+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v84 = Circle(
+		circleSize,
+		vec2(iMovement_v84+0.0, yPos_v84+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v85 = Circle(
+		circleSize,
+		vec2(iMovement_v85+0.0, yPos_v85+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v86 = Circle(
+		circleSize,
+		vec2(iMovement_v86+0.0, yPos_v86+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v87 = Circle(
+		circleSize,
+		vec2(iMovement_v87+0.0, yPos_v87+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v88 = Circle(
+		circleSize,
+		vec2(iMovement_v88+0.0, yPos_v88+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v89 = Circle(
+		circleSize,
+		vec2(iMovement_v89+0.0, yPos_v89+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v90 = Circle(
+		circleSize,
+		vec2(iMovement_v90+0.0, yPos_v90+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v91 = Circle(
+		circleSize,
+		vec2(iMovement_v91+0.0, yPos_v91+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v92 = Circle(
+		circleSize,
+		vec2(iMovement_v92+0.0, yPos_v92+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v93 = Circle(
+		circleSize,
+		vec2(iMovement_v93+0.0, yPos_v93+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v94 = Circle(
+		circleSize,
+		vec2(iMovement_v94+0.0, yPos_v94+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v95 = Circle(
+		circleSize,
+		vec2(iMovement_v95+0.0, yPos_v95+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v96 = Circle(
+		circleSize,
+		vec2(iMovement_v96+0.0, yPos_v96+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v97 = Circle(
+		circleSize,
+		vec2(iMovement_v97+0.0, yPos_v97+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v98 = Circle(
+		circleSize,
+		vec2(iMovement_v98+0.0, yPos_v98+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v99 = Circle(
+		circleSize,
+		vec2(iMovement_v99+0.0, yPos_v99+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Circle c_v100 = Circle(
+		circleSize,
+		vec2(iMovement_v100+0.0, yPos_v100+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.75, 0.75, 0.75, 1.0)
+	);
+
+	Rectangle rect_v11 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v112+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v12 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v113+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v13 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v114+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v14 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v115+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v15 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v116+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v16 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v117+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v17 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v118+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v18 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v119+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v19 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v120+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v20 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v121+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle rect_v21 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(iResolution.x/5.0*i_v122+iResolution.x/10.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Circle c_v101 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v123/PI)*ringSize+0.0, center.y+cos(iTime+i_v123/PI)*ringSize+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v102 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v124/PI)*ringSize_v1+0.0, center.y+cos(iTime+i_v124/PI)*ringSize_v1+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v103 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v125/PI)*ringSize_v2+0.0, center.y+cos(iTime+i_v125/PI)*ringSize_v2+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v104 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v126/PI)*ringSize_v3+0.0, center.y+cos(iTime+i_v126/PI)*ringSize_v3+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v105 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v127/PI)*ringSize_v4+0.0, center.y+cos(iTime+i_v127/PI)*ringSize_v4+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v106 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v128/PI)*ringSize_v5+0.0, center.y+cos(iTime+i_v128/PI)*ringSize_v5+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v107 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v129/PI)*ringSize_v6+0.0, center.y+cos(iTime+i_v129/PI)*ringSize_v6+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v108 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v130/PI)*ringSize_v7+0.0, center.y+cos(iTime+i_v130/PI)*ringSize_v7+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v109 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v131/PI)*ringSize_v8+0.0, center.y+cos(iTime+i_v131/PI)*ringSize_v8+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v110 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v132/PI)*ringSize_v9+0.0, center.y+cos(iTime+i_v132/PI)*ringSize_v9+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v111 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v133/PI)*ringSize_v10+0.0, center.y+cos(iTime+i_v133/PI)*ringSize_v10+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v112 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v134/PI)*ringSize_v11+0.0, center.y+cos(iTime+i_v134/PI)*ringSize_v11+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v113 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v135/PI)*ringSize_v12+0.0, center.y+cos(iTime+i_v135/PI)*ringSize_v12+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v114 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v136/PI)*ringSize_v13+0.0, center.y+cos(iTime+i_v136/PI)*ringSize_v13+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v115 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v137/PI)*ringSize_v14+0.0, center.y+cos(iTime+i_v137/PI)*ringSize_v14+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v116 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v138/PI)*ringSize_v15+0.0, center.y+cos(iTime+i_v138/PI)*ringSize_v15+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v117 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v139/PI)*ringSize_v16+0.0, center.y+cos(iTime+i_v139/PI)*ringSize_v16+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v118 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v140/PI)*ringSize_v17+0.0, center.y+cos(iTime+i_v140/PI)*ringSize_v17+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v119 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v141/PI)*ringSize_v18+0.0, center.y+cos(iTime+i_v141/PI)*ringSize_v18+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle c_v120 = Circle(
+		circleSize,
+		vec2(center.x+sin(iTime+i_v142/PI)*ringSize_v19+0.0, center.y+cos(iTime+i_v142/PI)*ringSize_v19+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	CircleGradient grad1 = CircleGradient(
+		0.0,
+		iResolution.y*2.0,
+		vec4(1.0, 0.5, 0.0, 1.0),
+		vec4(0.0, 0.0, 0.0, 0.0),
+		vec2(0.0+0.0, iResolution.y+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	CircleGradient grad2 = CircleGradient(
+		0.0,
+		iResolution.y*2.0,
+		vec4(0.0, 1.0, 1.0, 1.0),
+		vec4(0.0, 0.0, 0.0, 0.0),
+		vec2(iResolution.x+0.0, 0.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+		float grad1_blendValue = CircleGradientBlend(fragCoord, grad1);
+		vec4 grad1_blendedGradientColor = mix(grad1.innerColor, grad1.outerColor, grad1_blendValue);
+		fragColor = mix(fragColor, grad1_blendedGradientColor, grad1_blendedGradientColor.a);
+		float grad2_blendValue = CircleGradientBlend(fragCoord, grad2);
+		vec4 grad2_blendedGradientColor = mix(grad2.innerColor, grad2.outerColor, grad2_blendValue);
+		fragColor = mix(fragColor, grad2_blendedGradientColor, grad2_blendedGradientColor.a);
+
+	vec2 rectSpace = fragCoord;
+	rectSpace -= rect.pos;
+	rectSpace = rotate2D(rect.rot) * rectSpace;
+	rectSpace = scale2D(rect.scale) * rectSpace;
+	rectSpace += rect.pos;
+	if (false ^^ RectangleCheck(rectSpace, rect)) {
+		fragColor = rect.color;
+	}
+
+	vec2 rect_v1Space = fragCoord;
+	rect_v1Space -= rect_v1.pos;
+	rect_v1Space = rotate2D(rect_v1.rot) * rect_v1Space;
+	rect_v1Space = scale2D(rect_v1.scale) * rect_v1Space;
+	rect_v1Space += rect_v1.pos;
+	if (false ^^ RectangleCheck(rect_v1Space, rect_v1)) {
+		fragColor = rect_v1.color;
+	}
+
+	vec2 rect_v2Space = fragCoord;
+	rect_v2Space -= rect_v2.pos;
+	rect_v2Space = rotate2D(rect_v2.rot) * rect_v2Space;
+	rect_v2Space = scale2D(rect_v2.scale) * rect_v2Space;
+	rect_v2Space += rect_v2.pos;
+	if (false ^^ RectangleCheck(rect_v2Space, rect_v2)) {
+		fragColor = rect_v2.color;
+	}
+
+	vec2 rect_v3Space = fragCoord;
+	rect_v3Space -= rect_v3.pos;
+	rect_v3Space = rotate2D(rect_v3.rot) * rect_v3Space;
+	rect_v3Space = scale2D(rect_v3.scale) * rect_v3Space;
+	rect_v3Space += rect_v3.pos;
+	if (false ^^ RectangleCheck(rect_v3Space, rect_v3)) {
+		fragColor = rect_v3.color;
+	}
+
+	vec2 rect_v4Space = fragCoord;
+	rect_v4Space -= rect_v4.pos;
+	rect_v4Space = rotate2D(rect_v4.rot) * rect_v4Space;
+	rect_v4Space = scale2D(rect_v4.scale) * rect_v4Space;
+	rect_v4Space += rect_v4.pos;
+	if (false ^^ RectangleCheck(rect_v4Space, rect_v4)) {
+		fragColor = rect_v4.color;
+	}
+
+	vec2 rect_v5Space = fragCoord;
+	rect_v5Space -= rect_v5.pos;
+	rect_v5Space = rotate2D(rect_v5.rot) * rect_v5Space;
+	rect_v5Space = scale2D(rect_v5.scale) * rect_v5Space;
+	rect_v5Space += rect_v5.pos;
+	if (false ^^ RectangleCheck(rect_v5Space, rect_v5)) {
+		fragColor = rect_v5.color;
+	}
+
+	vec2 rect_v6Space = fragCoord;
+	rect_v6Space -= rect_v6.pos;
+	rect_v6Space = rotate2D(rect_v6.rot) * rect_v6Space;
+	rect_v6Space = scale2D(rect_v6.scale) * rect_v6Space;
+	rect_v6Space += rect_v6.pos;
+	if (false ^^ RectangleCheck(rect_v6Space, rect_v6)) {
+		fragColor = rect_v6.color;
+	}
+
+	vec2 rect_v7Space = fragCoord;
+	rect_v7Space -= rect_v7.pos;
+	rect_v7Space = rotate2D(rect_v7.rot) * rect_v7Space;
+	rect_v7Space = scale2D(rect_v7.scale) * rect_v7Space;
+	rect_v7Space += rect_v7.pos;
+	if (false ^^ RectangleCheck(rect_v7Space, rect_v7)) {
+		fragColor = rect_v7.color;
+	}
+
+	vec2 rect_v8Space = fragCoord;
+	rect_v8Space -= rect_v8.pos;
+	rect_v8Space = rotate2D(rect_v8.rot) * rect_v8Space;
+	rect_v8Space = scale2D(rect_v8.scale) * rect_v8Space;
+	rect_v8Space += rect_v8.pos;
+	if (false ^^ RectangleCheck(rect_v8Space, rect_v8)) {
+		fragColor = rect_v8.color;
+	}
+
+	vec2 rect_v9Space = fragCoord;
+	rect_v9Space -= rect_v9.pos;
+	rect_v9Space = rotate2D(rect_v9.rot) * rect_v9Space;
+	rect_v9Space = scale2D(rect_v9.scale) * rect_v9Space;
+	rect_v9Space += rect_v9.pos;
+	if (false ^^ RectangleCheck(rect_v9Space, rect_v9)) {
+		fragColor = rect_v9.color;
+	}
+
+	vec2 rect_v10Space = fragCoord;
+	rect_v10Space -= rect_v10.pos;
+	rect_v10Space = rotate2D(rect_v10.rot) * rect_v10Space;
+	rect_v10Space = scale2D(rect_v10.scale) * rect_v10Space;
+	rect_v10Space += rect_v10.pos;
+	if (false ^^ RectangleCheck(rect_v10Space, rect_v10)) {
+		fragColor = rect_v10.color;
+	}
+
+	vec2 cSpace = fragCoord;
+	cSpace -= c.pos;
+	cSpace = rotate2D(c.rot) * cSpace;
+	cSpace = scale2D(c.scale) * cSpace;
+	cSpace += c.pos;
+	if (false ^^ CircleCheck(cSpace, c)) {
+		fragColor = c.color;
+	}
+
+	vec2 c_v1Space = fragCoord;
+	c_v1Space -= c_v1.pos;
+	c_v1Space = rotate2D(c_v1.rot) * c_v1Space;
+	c_v1Space = scale2D(c_v1.scale) * c_v1Space;
+	c_v1Space += c_v1.pos;
+	if (false ^^ CircleCheck(c_v1Space, c_v1)) {
+		fragColor = c_v1.color;
+	}
+
+	vec2 c_v2Space = fragCoord;
+	c_v2Space -= c_v2.pos;
+	c_v2Space = rotate2D(c_v2.rot) * c_v2Space;
+	c_v2Space = scale2D(c_v2.scale) * c_v2Space;
+	c_v2Space += c_v2.pos;
+	if (false ^^ CircleCheck(c_v2Space, c_v2)) {
+		fragColor = c_v2.color;
+	}
+
+	vec2 c_v3Space = fragCoord;
+	c_v3Space -= c_v3.pos;
+	c_v3Space = rotate2D(c_v3.rot) * c_v3Space;
+	c_v3Space = scale2D(c_v3.scale) * c_v3Space;
+	c_v3Space += c_v3.pos;
+	if (false ^^ CircleCheck(c_v3Space, c_v3)) {
+		fragColor = c_v3.color;
+	}
+
+	vec2 c_v4Space = fragCoord;
+	c_v4Space -= c_v4.pos;
+	c_v4Space = rotate2D(c_v4.rot) * c_v4Space;
+	c_v4Space = scale2D(c_v4.scale) * c_v4Space;
+	c_v4Space += c_v4.pos;
+	if (false ^^ CircleCheck(c_v4Space, c_v4)) {
+		fragColor = c_v4.color;
+	}
+
+	vec2 c_v5Space = fragCoord;
+	c_v5Space -= c_v5.pos;
+	c_v5Space = rotate2D(c_v5.rot) * c_v5Space;
+	c_v5Space = scale2D(c_v5.scale) * c_v5Space;
+	c_v5Space += c_v5.pos;
+	if (false ^^ CircleCheck(c_v5Space, c_v5)) {
+		fragColor = c_v5.color;
+	}
+
+	vec2 c_v6Space = fragCoord;
+	c_v6Space -= c_v6.pos;
+	c_v6Space = rotate2D(c_v6.rot) * c_v6Space;
+	c_v6Space = scale2D(c_v6.scale) * c_v6Space;
+	c_v6Space += c_v6.pos;
+	if (false ^^ CircleCheck(c_v6Space, c_v6)) {
+		fragColor = c_v6.color;
+	}
+
+	vec2 c_v7Space = fragCoord;
+	c_v7Space -= c_v7.pos;
+	c_v7Space = rotate2D(c_v7.rot) * c_v7Space;
+	c_v7Space = scale2D(c_v7.scale) * c_v7Space;
+	c_v7Space += c_v7.pos;
+	if (false ^^ CircleCheck(c_v7Space, c_v7)) {
+		fragColor = c_v7.color;
+	}
+
+	vec2 c_v8Space = fragCoord;
+	c_v8Space -= c_v8.pos;
+	c_v8Space = rotate2D(c_v8.rot) * c_v8Space;
+	c_v8Space = scale2D(c_v8.scale) * c_v8Space;
+	c_v8Space += c_v8.pos;
+	if (false ^^ CircleCheck(c_v8Space, c_v8)) {
+		fragColor = c_v8.color;
+	}
+
+	vec2 c_v9Space = fragCoord;
+	c_v9Space -= c_v9.pos;
+	c_v9Space = rotate2D(c_v9.rot) * c_v9Space;
+	c_v9Space = scale2D(c_v9.scale) * c_v9Space;
+	c_v9Space += c_v9.pos;
+	if (false ^^ CircleCheck(c_v9Space, c_v9)) {
+		fragColor = c_v9.color;
+	}
+
+	vec2 c_v10Space = fragCoord;
+	c_v10Space -= c_v10.pos;
+	c_v10Space = rotate2D(c_v10.rot) * c_v10Space;
+	c_v10Space = scale2D(c_v10.scale) * c_v10Space;
+	c_v10Space += c_v10.pos;
+	if (false ^^ CircleCheck(c_v10Space, c_v10)) {
+		fragColor = c_v10.color;
+	}
+
+	vec2 c_v11Space = fragCoord;
+	c_v11Space -= c_v11.pos;
+	c_v11Space = rotate2D(c_v11.rot) * c_v11Space;
+	c_v11Space = scale2D(c_v11.scale) * c_v11Space;
+	c_v11Space += c_v11.pos;
+	if (false ^^ CircleCheck(c_v11Space, c_v11)) {
+		fragColor = c_v11.color;
+	}
+
+	vec2 c_v12Space = fragCoord;
+	c_v12Space -= c_v12.pos;
+	c_v12Space = rotate2D(c_v12.rot) * c_v12Space;
+	c_v12Space = scale2D(c_v12.scale) * c_v12Space;
+	c_v12Space += c_v12.pos;
+	if (false ^^ CircleCheck(c_v12Space, c_v12)) {
+		fragColor = c_v12.color;
+	}
+
+	vec2 c_v13Space = fragCoord;
+	c_v13Space -= c_v13.pos;
+	c_v13Space = rotate2D(c_v13.rot) * c_v13Space;
+	c_v13Space = scale2D(c_v13.scale) * c_v13Space;
+	c_v13Space += c_v13.pos;
+	if (false ^^ CircleCheck(c_v13Space, c_v13)) {
+		fragColor = c_v13.color;
+	}
+
+	vec2 c_v14Space = fragCoord;
+	c_v14Space -= c_v14.pos;
+	c_v14Space = rotate2D(c_v14.rot) * c_v14Space;
+	c_v14Space = scale2D(c_v14.scale) * c_v14Space;
+	c_v14Space += c_v14.pos;
+	if (false ^^ CircleCheck(c_v14Space, c_v14)) {
+		fragColor = c_v14.color;
+	}
+
+	vec2 c_v15Space = fragCoord;
+	c_v15Space -= c_v15.pos;
+	c_v15Space = rotate2D(c_v15.rot) * c_v15Space;
+	c_v15Space = scale2D(c_v15.scale) * c_v15Space;
+	c_v15Space += c_v15.pos;
+	if (false ^^ CircleCheck(c_v15Space, c_v15)) {
+		fragColor = c_v15.color;
+	}
+
+	vec2 c_v16Space = fragCoord;
+	c_v16Space -= c_v16.pos;
+	c_v16Space = rotate2D(c_v16.rot) * c_v16Space;
+	c_v16Space = scale2D(c_v16.scale) * c_v16Space;
+	c_v16Space += c_v16.pos;
+	if (false ^^ CircleCheck(c_v16Space, c_v16)) {
+		fragColor = c_v16.color;
+	}
+
+	vec2 c_v17Space = fragCoord;
+	c_v17Space -= c_v17.pos;
+	c_v17Space = rotate2D(c_v17.rot) * c_v17Space;
+	c_v17Space = scale2D(c_v17.scale) * c_v17Space;
+	c_v17Space += c_v17.pos;
+	if (false ^^ CircleCheck(c_v17Space, c_v17)) {
+		fragColor = c_v17.color;
+	}
+
+	vec2 c_v18Space = fragCoord;
+	c_v18Space -= c_v18.pos;
+	c_v18Space = rotate2D(c_v18.rot) * c_v18Space;
+	c_v18Space = scale2D(c_v18.scale) * c_v18Space;
+	c_v18Space += c_v18.pos;
+	if (false ^^ CircleCheck(c_v18Space, c_v18)) {
+		fragColor = c_v18.color;
+	}
+
+	vec2 c_v19Space = fragCoord;
+	c_v19Space -= c_v19.pos;
+	c_v19Space = rotate2D(c_v19.rot) * c_v19Space;
+	c_v19Space = scale2D(c_v19.scale) * c_v19Space;
+	c_v19Space += c_v19.pos;
+	if (false ^^ CircleCheck(c_v19Space, c_v19)) {
+		fragColor = c_v19.color;
+	}
+
+	vec2 c_v20Space = fragCoord;
+	c_v20Space -= c_v20.pos;
+	c_v20Space = rotate2D(c_v20.rot) * c_v20Space;
+	c_v20Space = scale2D(c_v20.scale) * c_v20Space;
+	c_v20Space += c_v20.pos;
+	if (false ^^ CircleCheck(c_v20Space, c_v20)) {
+		fragColor = c_v20.color;
+	}
+
+	vec2 c_v21Space = fragCoord;
+	c_v21Space -= c_v21.pos;
+	c_v21Space = rotate2D(c_v21.rot) * c_v21Space;
+	c_v21Space = scale2D(c_v21.scale) * c_v21Space;
+	c_v21Space += c_v21.pos;
+	if (false ^^ CircleCheck(c_v21Space, c_v21)) {
+		fragColor = c_v21.color;
+	}
+
+	vec2 c_v22Space = fragCoord;
+	c_v22Space -= c_v22.pos;
+	c_v22Space = rotate2D(c_v22.rot) * c_v22Space;
+	c_v22Space = scale2D(c_v22.scale) * c_v22Space;
+	c_v22Space += c_v22.pos;
+	if (false ^^ CircleCheck(c_v22Space, c_v22)) {
+		fragColor = c_v22.color;
+	}
+
+	vec2 c_v23Space = fragCoord;
+	c_v23Space -= c_v23.pos;
+	c_v23Space = rotate2D(c_v23.rot) * c_v23Space;
+	c_v23Space = scale2D(c_v23.scale) * c_v23Space;
+	c_v23Space += c_v23.pos;
+	if (false ^^ CircleCheck(c_v23Space, c_v23)) {
+		fragColor = c_v23.color;
+	}
+
+	vec2 c_v24Space = fragCoord;
+	c_v24Space -= c_v24.pos;
+	c_v24Space = rotate2D(c_v24.rot) * c_v24Space;
+	c_v24Space = scale2D(c_v24.scale) * c_v24Space;
+	c_v24Space += c_v24.pos;
+	if (false ^^ CircleCheck(c_v24Space, c_v24)) {
+		fragColor = c_v24.color;
+	}
+
+	vec2 c_v25Space = fragCoord;
+	c_v25Space -= c_v25.pos;
+	c_v25Space = rotate2D(c_v25.rot) * c_v25Space;
+	c_v25Space = scale2D(c_v25.scale) * c_v25Space;
+	c_v25Space += c_v25.pos;
+	if (false ^^ CircleCheck(c_v25Space, c_v25)) {
+		fragColor = c_v25.color;
+	}
+
+	vec2 c_v26Space = fragCoord;
+	c_v26Space -= c_v26.pos;
+	c_v26Space = rotate2D(c_v26.rot) * c_v26Space;
+	c_v26Space = scale2D(c_v26.scale) * c_v26Space;
+	c_v26Space += c_v26.pos;
+	if (false ^^ CircleCheck(c_v26Space, c_v26)) {
+		fragColor = c_v26.color;
+	}
+
+	vec2 c_v27Space = fragCoord;
+	c_v27Space -= c_v27.pos;
+	c_v27Space = rotate2D(c_v27.rot) * c_v27Space;
+	c_v27Space = scale2D(c_v27.scale) * c_v27Space;
+	c_v27Space += c_v27.pos;
+	if (false ^^ CircleCheck(c_v27Space, c_v27)) {
+		fragColor = c_v27.color;
+	}
+
+	vec2 c_v28Space = fragCoord;
+	c_v28Space -= c_v28.pos;
+	c_v28Space = rotate2D(c_v28.rot) * c_v28Space;
+	c_v28Space = scale2D(c_v28.scale) * c_v28Space;
+	c_v28Space += c_v28.pos;
+	if (false ^^ CircleCheck(c_v28Space, c_v28)) {
+		fragColor = c_v28.color;
+	}
+
+	vec2 c_v29Space = fragCoord;
+	c_v29Space -= c_v29.pos;
+	c_v29Space = rotate2D(c_v29.rot) * c_v29Space;
+	c_v29Space = scale2D(c_v29.scale) * c_v29Space;
+	c_v29Space += c_v29.pos;
+	if (false ^^ CircleCheck(c_v29Space, c_v29)) {
+		fragColor = c_v29.color;
+	}
+
+	vec2 c_v30Space = fragCoord;
+	c_v30Space -= c_v30.pos;
+	c_v30Space = rotate2D(c_v30.rot) * c_v30Space;
+	c_v30Space = scale2D(c_v30.scale) * c_v30Space;
+	c_v30Space += c_v30.pos;
+	if (false ^^ CircleCheck(c_v30Space, c_v30)) {
+		fragColor = c_v30.color;
+	}
+
+	vec2 c_v31Space = fragCoord;
+	c_v31Space -= c_v31.pos;
+	c_v31Space = rotate2D(c_v31.rot) * c_v31Space;
+	c_v31Space = scale2D(c_v31.scale) * c_v31Space;
+	c_v31Space += c_v31.pos;
+	if (false ^^ CircleCheck(c_v31Space, c_v31)) {
+		fragColor = c_v31.color;
+	}
+
+	vec2 c_v32Space = fragCoord;
+	c_v32Space -= c_v32.pos;
+	c_v32Space = rotate2D(c_v32.rot) * c_v32Space;
+	c_v32Space = scale2D(c_v32.scale) * c_v32Space;
+	c_v32Space += c_v32.pos;
+	if (false ^^ CircleCheck(c_v32Space, c_v32)) {
+		fragColor = c_v32.color;
+	}
+
+	vec2 c_v33Space = fragCoord;
+	c_v33Space -= c_v33.pos;
+	c_v33Space = rotate2D(c_v33.rot) * c_v33Space;
+	c_v33Space = scale2D(c_v33.scale) * c_v33Space;
+	c_v33Space += c_v33.pos;
+	if (false ^^ CircleCheck(c_v33Space, c_v33)) {
+		fragColor = c_v33.color;
+	}
+
+	vec2 c_v34Space = fragCoord;
+	c_v34Space -= c_v34.pos;
+	c_v34Space = rotate2D(c_v34.rot) * c_v34Space;
+	c_v34Space = scale2D(c_v34.scale) * c_v34Space;
+	c_v34Space += c_v34.pos;
+	if (false ^^ CircleCheck(c_v34Space, c_v34)) {
+		fragColor = c_v34.color;
+	}
+
+	vec2 c_v35Space = fragCoord;
+	c_v35Space -= c_v35.pos;
+	c_v35Space = rotate2D(c_v35.rot) * c_v35Space;
+	c_v35Space = scale2D(c_v35.scale) * c_v35Space;
+	c_v35Space += c_v35.pos;
+	if (false ^^ CircleCheck(c_v35Space, c_v35)) {
+		fragColor = c_v35.color;
+	}
+
+	vec2 c_v36Space = fragCoord;
+	c_v36Space -= c_v36.pos;
+	c_v36Space = rotate2D(c_v36.rot) * c_v36Space;
+	c_v36Space = scale2D(c_v36.scale) * c_v36Space;
+	c_v36Space += c_v36.pos;
+	if (false ^^ CircleCheck(c_v36Space, c_v36)) {
+		fragColor = c_v36.color;
+	}
+
+	vec2 c_v37Space = fragCoord;
+	c_v37Space -= c_v37.pos;
+	c_v37Space = rotate2D(c_v37.rot) * c_v37Space;
+	c_v37Space = scale2D(c_v37.scale) * c_v37Space;
+	c_v37Space += c_v37.pos;
+	if (false ^^ CircleCheck(c_v37Space, c_v37)) {
+		fragColor = c_v37.color;
+	}
+
+	vec2 c_v38Space = fragCoord;
+	c_v38Space -= c_v38.pos;
+	c_v38Space = rotate2D(c_v38.rot) * c_v38Space;
+	c_v38Space = scale2D(c_v38.scale) * c_v38Space;
+	c_v38Space += c_v38.pos;
+	if (false ^^ CircleCheck(c_v38Space, c_v38)) {
+		fragColor = c_v38.color;
+	}
+
+	vec2 c_v39Space = fragCoord;
+	c_v39Space -= c_v39.pos;
+	c_v39Space = rotate2D(c_v39.rot) * c_v39Space;
+	c_v39Space = scale2D(c_v39.scale) * c_v39Space;
+	c_v39Space += c_v39.pos;
+	if (false ^^ CircleCheck(c_v39Space, c_v39)) {
+		fragColor = c_v39.color;
+	}
+
+	vec2 c_v40Space = fragCoord;
+	c_v40Space -= c_v40.pos;
+	c_v40Space = rotate2D(c_v40.rot) * c_v40Space;
+	c_v40Space = scale2D(c_v40.scale) * c_v40Space;
+	c_v40Space += c_v40.pos;
+	if (false ^^ CircleCheck(c_v40Space, c_v40)) {
+		fragColor = c_v40.color;
+	}
+
+	vec2 c_v41Space = fragCoord;
+	c_v41Space -= c_v41.pos;
+	c_v41Space = rotate2D(c_v41.rot) * c_v41Space;
+	c_v41Space = scale2D(c_v41.scale) * c_v41Space;
+	c_v41Space += c_v41.pos;
+	if (false ^^ CircleCheck(c_v41Space, c_v41)) {
+		fragColor = c_v41.color;
+	}
+
+	vec2 c_v42Space = fragCoord;
+	c_v42Space -= c_v42.pos;
+	c_v42Space = rotate2D(c_v42.rot) * c_v42Space;
+	c_v42Space = scale2D(c_v42.scale) * c_v42Space;
+	c_v42Space += c_v42.pos;
+	if (false ^^ CircleCheck(c_v42Space, c_v42)) {
+		fragColor = c_v42.color;
+	}
+
+	vec2 c_v43Space = fragCoord;
+	c_v43Space -= c_v43.pos;
+	c_v43Space = rotate2D(c_v43.rot) * c_v43Space;
+	c_v43Space = scale2D(c_v43.scale) * c_v43Space;
+	c_v43Space += c_v43.pos;
+	if (false ^^ CircleCheck(c_v43Space, c_v43)) {
+		fragColor = c_v43.color;
+	}
+
+	vec2 c_v44Space = fragCoord;
+	c_v44Space -= c_v44.pos;
+	c_v44Space = rotate2D(c_v44.rot) * c_v44Space;
+	c_v44Space = scale2D(c_v44.scale) * c_v44Space;
+	c_v44Space += c_v44.pos;
+	if (false ^^ CircleCheck(c_v44Space, c_v44)) {
+		fragColor = c_v44.color;
+	}
+
+	vec2 c_v45Space = fragCoord;
+	c_v45Space -= c_v45.pos;
+	c_v45Space = rotate2D(c_v45.rot) * c_v45Space;
+	c_v45Space = scale2D(c_v45.scale) * c_v45Space;
+	c_v45Space += c_v45.pos;
+	if (false ^^ CircleCheck(c_v45Space, c_v45)) {
+		fragColor = c_v45.color;
+	}
+
+	vec2 c_v46Space = fragCoord;
+	c_v46Space -= c_v46.pos;
+	c_v46Space = rotate2D(c_v46.rot) * c_v46Space;
+	c_v46Space = scale2D(c_v46.scale) * c_v46Space;
+	c_v46Space += c_v46.pos;
+	if (false ^^ CircleCheck(c_v46Space, c_v46)) {
+		fragColor = c_v46.color;
+	}
+
+	vec2 c_v47Space = fragCoord;
+	c_v47Space -= c_v47.pos;
+	c_v47Space = rotate2D(c_v47.rot) * c_v47Space;
+	c_v47Space = scale2D(c_v47.scale) * c_v47Space;
+	c_v47Space += c_v47.pos;
+	if (false ^^ CircleCheck(c_v47Space, c_v47)) {
+		fragColor = c_v47.color;
+	}
+
+	vec2 c_v48Space = fragCoord;
+	c_v48Space -= c_v48.pos;
+	c_v48Space = rotate2D(c_v48.rot) * c_v48Space;
+	c_v48Space = scale2D(c_v48.scale) * c_v48Space;
+	c_v48Space += c_v48.pos;
+	if (false ^^ CircleCheck(c_v48Space, c_v48)) {
+		fragColor = c_v48.color;
+	}
+
+	vec2 c_v49Space = fragCoord;
+	c_v49Space -= c_v49.pos;
+	c_v49Space = rotate2D(c_v49.rot) * c_v49Space;
+	c_v49Space = scale2D(c_v49.scale) * c_v49Space;
+	c_v49Space += c_v49.pos;
+	if (false ^^ CircleCheck(c_v49Space, c_v49)) {
+		fragColor = c_v49.color;
+	}
+
+	vec2 c_v50Space = fragCoord;
+	c_v50Space -= c_v50.pos;
+	c_v50Space = rotate2D(c_v50.rot) * c_v50Space;
+	c_v50Space = scale2D(c_v50.scale) * c_v50Space;
+	c_v50Space += c_v50.pos;
+	if (false ^^ CircleCheck(c_v50Space, c_v50)) {
+		fragColor = c_v50.color;
+	}
+
+	vec2 c_v51Space = fragCoord;
+	c_v51Space -= c_v51.pos;
+	c_v51Space = rotate2D(c_v51.rot) * c_v51Space;
+	c_v51Space = scale2D(c_v51.scale) * c_v51Space;
+	c_v51Space += c_v51.pos;
+	if (false ^^ CircleCheck(c_v51Space, c_v51)) {
+		fragColor = c_v51.color;
+	}
+
+	vec2 c_v52Space = fragCoord;
+	c_v52Space -= c_v52.pos;
+	c_v52Space = rotate2D(c_v52.rot) * c_v52Space;
+	c_v52Space = scale2D(c_v52.scale) * c_v52Space;
+	c_v52Space += c_v52.pos;
+	if (false ^^ CircleCheck(c_v52Space, c_v52)) {
+		fragColor = c_v52.color;
+	}
+
+	vec2 c_v53Space = fragCoord;
+	c_v53Space -= c_v53.pos;
+	c_v53Space = rotate2D(c_v53.rot) * c_v53Space;
+	c_v53Space = scale2D(c_v53.scale) * c_v53Space;
+	c_v53Space += c_v53.pos;
+	if (false ^^ CircleCheck(c_v53Space, c_v53)) {
+		fragColor = c_v53.color;
+	}
+
+	vec2 c_v54Space = fragCoord;
+	c_v54Space -= c_v54.pos;
+	c_v54Space = rotate2D(c_v54.rot) * c_v54Space;
+	c_v54Space = scale2D(c_v54.scale) * c_v54Space;
+	c_v54Space += c_v54.pos;
+	if (false ^^ CircleCheck(c_v54Space, c_v54)) {
+		fragColor = c_v54.color;
+	}
+
+	vec2 c_v55Space = fragCoord;
+	c_v55Space -= c_v55.pos;
+	c_v55Space = rotate2D(c_v55.rot) * c_v55Space;
+	c_v55Space = scale2D(c_v55.scale) * c_v55Space;
+	c_v55Space += c_v55.pos;
+	if (false ^^ CircleCheck(c_v55Space, c_v55)) {
+		fragColor = c_v55.color;
+	}
+
+	vec2 c_v56Space = fragCoord;
+	c_v56Space -= c_v56.pos;
+	c_v56Space = rotate2D(c_v56.rot) * c_v56Space;
+	c_v56Space = scale2D(c_v56.scale) * c_v56Space;
+	c_v56Space += c_v56.pos;
+	if (false ^^ CircleCheck(c_v56Space, c_v56)) {
+		fragColor = c_v56.color;
+	}
+
+	vec2 c_v57Space = fragCoord;
+	c_v57Space -= c_v57.pos;
+	c_v57Space = rotate2D(c_v57.rot) * c_v57Space;
+	c_v57Space = scale2D(c_v57.scale) * c_v57Space;
+	c_v57Space += c_v57.pos;
+	if (false ^^ CircleCheck(c_v57Space, c_v57)) {
+		fragColor = c_v57.color;
+	}
+
+	vec2 c_v58Space = fragCoord;
+	c_v58Space -= c_v58.pos;
+	c_v58Space = rotate2D(c_v58.rot) * c_v58Space;
+	c_v58Space = scale2D(c_v58.scale) * c_v58Space;
+	c_v58Space += c_v58.pos;
+	if (false ^^ CircleCheck(c_v58Space, c_v58)) {
+		fragColor = c_v58.color;
+	}
+
+	vec2 c_v59Space = fragCoord;
+	c_v59Space -= c_v59.pos;
+	c_v59Space = rotate2D(c_v59.rot) * c_v59Space;
+	c_v59Space = scale2D(c_v59.scale) * c_v59Space;
+	c_v59Space += c_v59.pos;
+	if (false ^^ CircleCheck(c_v59Space, c_v59)) {
+		fragColor = c_v59.color;
+	}
+
+	vec2 c_v60Space = fragCoord;
+	c_v60Space -= c_v60.pos;
+	c_v60Space = rotate2D(c_v60.rot) * c_v60Space;
+	c_v60Space = scale2D(c_v60.scale) * c_v60Space;
+	c_v60Space += c_v60.pos;
+	if (false ^^ CircleCheck(c_v60Space, c_v60)) {
+		fragColor = c_v60.color;
+	}
+
+	vec2 c_v61Space = fragCoord;
+	c_v61Space -= c_v61.pos;
+	c_v61Space = rotate2D(c_v61.rot) * c_v61Space;
+	c_v61Space = scale2D(c_v61.scale) * c_v61Space;
+	c_v61Space += c_v61.pos;
+	if (false ^^ CircleCheck(c_v61Space, c_v61)) {
+		fragColor = c_v61.color;
+	}
+
+	vec2 c_v62Space = fragCoord;
+	c_v62Space -= c_v62.pos;
+	c_v62Space = rotate2D(c_v62.rot) * c_v62Space;
+	c_v62Space = scale2D(c_v62.scale) * c_v62Space;
+	c_v62Space += c_v62.pos;
+	if (false ^^ CircleCheck(c_v62Space, c_v62)) {
+		fragColor = c_v62.color;
+	}
+
+	vec2 c_v63Space = fragCoord;
+	c_v63Space -= c_v63.pos;
+	c_v63Space = rotate2D(c_v63.rot) * c_v63Space;
+	c_v63Space = scale2D(c_v63.scale) * c_v63Space;
+	c_v63Space += c_v63.pos;
+	if (false ^^ CircleCheck(c_v63Space, c_v63)) {
+		fragColor = c_v63.color;
+	}
+
+	vec2 c_v64Space = fragCoord;
+	c_v64Space -= c_v64.pos;
+	c_v64Space = rotate2D(c_v64.rot) * c_v64Space;
+	c_v64Space = scale2D(c_v64.scale) * c_v64Space;
+	c_v64Space += c_v64.pos;
+	if (false ^^ CircleCheck(c_v64Space, c_v64)) {
+		fragColor = c_v64.color;
+	}
+
+	vec2 c_v65Space = fragCoord;
+	c_v65Space -= c_v65.pos;
+	c_v65Space = rotate2D(c_v65.rot) * c_v65Space;
+	c_v65Space = scale2D(c_v65.scale) * c_v65Space;
+	c_v65Space += c_v65.pos;
+	if (false ^^ CircleCheck(c_v65Space, c_v65)) {
+		fragColor = c_v65.color;
+	}
+
+	vec2 c_v66Space = fragCoord;
+	c_v66Space -= c_v66.pos;
+	c_v66Space = rotate2D(c_v66.rot) * c_v66Space;
+	c_v66Space = scale2D(c_v66.scale) * c_v66Space;
+	c_v66Space += c_v66.pos;
+	if (false ^^ CircleCheck(c_v66Space, c_v66)) {
+		fragColor = c_v66.color;
+	}
+
+	vec2 c_v67Space = fragCoord;
+	c_v67Space -= c_v67.pos;
+	c_v67Space = rotate2D(c_v67.rot) * c_v67Space;
+	c_v67Space = scale2D(c_v67.scale) * c_v67Space;
+	c_v67Space += c_v67.pos;
+	if (false ^^ CircleCheck(c_v67Space, c_v67)) {
+		fragColor = c_v67.color;
+	}
+
+	vec2 c_v68Space = fragCoord;
+	c_v68Space -= c_v68.pos;
+	c_v68Space = rotate2D(c_v68.rot) * c_v68Space;
+	c_v68Space = scale2D(c_v68.scale) * c_v68Space;
+	c_v68Space += c_v68.pos;
+	if (false ^^ CircleCheck(c_v68Space, c_v68)) {
+		fragColor = c_v68.color;
+	}
+
+	vec2 c_v69Space = fragCoord;
+	c_v69Space -= c_v69.pos;
+	c_v69Space = rotate2D(c_v69.rot) * c_v69Space;
+	c_v69Space = scale2D(c_v69.scale) * c_v69Space;
+	c_v69Space += c_v69.pos;
+	if (false ^^ CircleCheck(c_v69Space, c_v69)) {
+		fragColor = c_v69.color;
+	}
+
+	vec2 c_v70Space = fragCoord;
+	c_v70Space -= c_v70.pos;
+	c_v70Space = rotate2D(c_v70.rot) * c_v70Space;
+	c_v70Space = scale2D(c_v70.scale) * c_v70Space;
+	c_v70Space += c_v70.pos;
+	if (false ^^ CircleCheck(c_v70Space, c_v70)) {
+		fragColor = c_v70.color;
+	}
+
+	vec2 c_v71Space = fragCoord;
+	c_v71Space -= c_v71.pos;
+	c_v71Space = rotate2D(c_v71.rot) * c_v71Space;
+	c_v71Space = scale2D(c_v71.scale) * c_v71Space;
+	c_v71Space += c_v71.pos;
+	if (false ^^ CircleCheck(c_v71Space, c_v71)) {
+		fragColor = c_v71.color;
+	}
+
+	vec2 c_v72Space = fragCoord;
+	c_v72Space -= c_v72.pos;
+	c_v72Space = rotate2D(c_v72.rot) * c_v72Space;
+	c_v72Space = scale2D(c_v72.scale) * c_v72Space;
+	c_v72Space += c_v72.pos;
+	if (false ^^ CircleCheck(c_v72Space, c_v72)) {
+		fragColor = c_v72.color;
+	}
+
+	vec2 c_v73Space = fragCoord;
+	c_v73Space -= c_v73.pos;
+	c_v73Space = rotate2D(c_v73.rot) * c_v73Space;
+	c_v73Space = scale2D(c_v73.scale) * c_v73Space;
+	c_v73Space += c_v73.pos;
+	if (false ^^ CircleCheck(c_v73Space, c_v73)) {
+		fragColor = c_v73.color;
+	}
+
+	vec2 c_v74Space = fragCoord;
+	c_v74Space -= c_v74.pos;
+	c_v74Space = rotate2D(c_v74.rot) * c_v74Space;
+	c_v74Space = scale2D(c_v74.scale) * c_v74Space;
+	c_v74Space += c_v74.pos;
+	if (false ^^ CircleCheck(c_v74Space, c_v74)) {
+		fragColor = c_v74.color;
+	}
+
+	vec2 c_v75Space = fragCoord;
+	c_v75Space -= c_v75.pos;
+	c_v75Space = rotate2D(c_v75.rot) * c_v75Space;
+	c_v75Space = scale2D(c_v75.scale) * c_v75Space;
+	c_v75Space += c_v75.pos;
+	if (false ^^ CircleCheck(c_v75Space, c_v75)) {
+		fragColor = c_v75.color;
+	}
+
+	vec2 c_v76Space = fragCoord;
+	c_v76Space -= c_v76.pos;
+	c_v76Space = rotate2D(c_v76.rot) * c_v76Space;
+	c_v76Space = scale2D(c_v76.scale) * c_v76Space;
+	c_v76Space += c_v76.pos;
+	if (false ^^ CircleCheck(c_v76Space, c_v76)) {
+		fragColor = c_v76.color;
+	}
+
+	vec2 c_v77Space = fragCoord;
+	c_v77Space -= c_v77.pos;
+	c_v77Space = rotate2D(c_v77.rot) * c_v77Space;
+	c_v77Space = scale2D(c_v77.scale) * c_v77Space;
+	c_v77Space += c_v77.pos;
+	if (false ^^ CircleCheck(c_v77Space, c_v77)) {
+		fragColor = c_v77.color;
+	}
+
+	vec2 c_v78Space = fragCoord;
+	c_v78Space -= c_v78.pos;
+	c_v78Space = rotate2D(c_v78.rot) * c_v78Space;
+	c_v78Space = scale2D(c_v78.scale) * c_v78Space;
+	c_v78Space += c_v78.pos;
+	if (false ^^ CircleCheck(c_v78Space, c_v78)) {
+		fragColor = c_v78.color;
+	}
+
+	vec2 c_v79Space = fragCoord;
+	c_v79Space -= c_v79.pos;
+	c_v79Space = rotate2D(c_v79.rot) * c_v79Space;
+	c_v79Space = scale2D(c_v79.scale) * c_v79Space;
+	c_v79Space += c_v79.pos;
+	if (false ^^ CircleCheck(c_v79Space, c_v79)) {
+		fragColor = c_v79.color;
+	}
+
+	vec2 c_v80Space = fragCoord;
+	c_v80Space -= c_v80.pos;
+	c_v80Space = rotate2D(c_v80.rot) * c_v80Space;
+	c_v80Space = scale2D(c_v80.scale) * c_v80Space;
+	c_v80Space += c_v80.pos;
+	if (false ^^ CircleCheck(c_v80Space, c_v80)) {
+		fragColor = c_v80.color;
+	}
+
+	vec2 c_v81Space = fragCoord;
+	c_v81Space -= c_v81.pos;
+	c_v81Space = rotate2D(c_v81.rot) * c_v81Space;
+	c_v81Space = scale2D(c_v81.scale) * c_v81Space;
+	c_v81Space += c_v81.pos;
+	if (false ^^ CircleCheck(c_v81Space, c_v81)) {
+		fragColor = c_v81.color;
+	}
+
+	vec2 c_v82Space = fragCoord;
+	c_v82Space -= c_v82.pos;
+	c_v82Space = rotate2D(c_v82.rot) * c_v82Space;
+	c_v82Space = scale2D(c_v82.scale) * c_v82Space;
+	c_v82Space += c_v82.pos;
+	if (false ^^ CircleCheck(c_v82Space, c_v82)) {
+		fragColor = c_v82.color;
+	}
+
+	vec2 c_v83Space = fragCoord;
+	c_v83Space -= c_v83.pos;
+	c_v83Space = rotate2D(c_v83.rot) * c_v83Space;
+	c_v83Space = scale2D(c_v83.scale) * c_v83Space;
+	c_v83Space += c_v83.pos;
+	if (false ^^ CircleCheck(c_v83Space, c_v83)) {
+		fragColor = c_v83.color;
+	}
+
+	vec2 c_v84Space = fragCoord;
+	c_v84Space -= c_v84.pos;
+	c_v84Space = rotate2D(c_v84.rot) * c_v84Space;
+	c_v84Space = scale2D(c_v84.scale) * c_v84Space;
+	c_v84Space += c_v84.pos;
+	if (false ^^ CircleCheck(c_v84Space, c_v84)) {
+		fragColor = c_v84.color;
+	}
+
+	vec2 c_v85Space = fragCoord;
+	c_v85Space -= c_v85.pos;
+	c_v85Space = rotate2D(c_v85.rot) * c_v85Space;
+	c_v85Space = scale2D(c_v85.scale) * c_v85Space;
+	c_v85Space += c_v85.pos;
+	if (false ^^ CircleCheck(c_v85Space, c_v85)) {
+		fragColor = c_v85.color;
+	}
+
+	vec2 c_v86Space = fragCoord;
+	c_v86Space -= c_v86.pos;
+	c_v86Space = rotate2D(c_v86.rot) * c_v86Space;
+	c_v86Space = scale2D(c_v86.scale) * c_v86Space;
+	c_v86Space += c_v86.pos;
+	if (false ^^ CircleCheck(c_v86Space, c_v86)) {
+		fragColor = c_v86.color;
+	}
+
+	vec2 c_v87Space = fragCoord;
+	c_v87Space -= c_v87.pos;
+	c_v87Space = rotate2D(c_v87.rot) * c_v87Space;
+	c_v87Space = scale2D(c_v87.scale) * c_v87Space;
+	c_v87Space += c_v87.pos;
+	if (false ^^ CircleCheck(c_v87Space, c_v87)) {
+		fragColor = c_v87.color;
+	}
+
+	vec2 c_v88Space = fragCoord;
+	c_v88Space -= c_v88.pos;
+	c_v88Space = rotate2D(c_v88.rot) * c_v88Space;
+	c_v88Space = scale2D(c_v88.scale) * c_v88Space;
+	c_v88Space += c_v88.pos;
+	if (false ^^ CircleCheck(c_v88Space, c_v88)) {
+		fragColor = c_v88.color;
+	}
+
+	vec2 c_v89Space = fragCoord;
+	c_v89Space -= c_v89.pos;
+	c_v89Space = rotate2D(c_v89.rot) * c_v89Space;
+	c_v89Space = scale2D(c_v89.scale) * c_v89Space;
+	c_v89Space += c_v89.pos;
+	if (false ^^ CircleCheck(c_v89Space, c_v89)) {
+		fragColor = c_v89.color;
+	}
+
+	vec2 c_v90Space = fragCoord;
+	c_v90Space -= c_v90.pos;
+	c_v90Space = rotate2D(c_v90.rot) * c_v90Space;
+	c_v90Space = scale2D(c_v90.scale) * c_v90Space;
+	c_v90Space += c_v90.pos;
+	if (false ^^ CircleCheck(c_v90Space, c_v90)) {
+		fragColor = c_v90.color;
+	}
+
+	vec2 c_v91Space = fragCoord;
+	c_v91Space -= c_v91.pos;
+	c_v91Space = rotate2D(c_v91.rot) * c_v91Space;
+	c_v91Space = scale2D(c_v91.scale) * c_v91Space;
+	c_v91Space += c_v91.pos;
+	if (false ^^ CircleCheck(c_v91Space, c_v91)) {
+		fragColor = c_v91.color;
+	}
+
+	vec2 c_v92Space = fragCoord;
+	c_v92Space -= c_v92.pos;
+	c_v92Space = rotate2D(c_v92.rot) * c_v92Space;
+	c_v92Space = scale2D(c_v92.scale) * c_v92Space;
+	c_v92Space += c_v92.pos;
+	if (false ^^ CircleCheck(c_v92Space, c_v92)) {
+		fragColor = c_v92.color;
+	}
+
+	vec2 c_v93Space = fragCoord;
+	c_v93Space -= c_v93.pos;
+	c_v93Space = rotate2D(c_v93.rot) * c_v93Space;
+	c_v93Space = scale2D(c_v93.scale) * c_v93Space;
+	c_v93Space += c_v93.pos;
+	if (false ^^ CircleCheck(c_v93Space, c_v93)) {
+		fragColor = c_v93.color;
+	}
+
+	vec2 c_v94Space = fragCoord;
+	c_v94Space -= c_v94.pos;
+	c_v94Space = rotate2D(c_v94.rot) * c_v94Space;
+	c_v94Space = scale2D(c_v94.scale) * c_v94Space;
+	c_v94Space += c_v94.pos;
+	if (false ^^ CircleCheck(c_v94Space, c_v94)) {
+		fragColor = c_v94.color;
+	}
+
+	vec2 c_v95Space = fragCoord;
+	c_v95Space -= c_v95.pos;
+	c_v95Space = rotate2D(c_v95.rot) * c_v95Space;
+	c_v95Space = scale2D(c_v95.scale) * c_v95Space;
+	c_v95Space += c_v95.pos;
+	if (false ^^ CircleCheck(c_v95Space, c_v95)) {
+		fragColor = c_v95.color;
+	}
+
+	vec2 c_v96Space = fragCoord;
+	c_v96Space -= c_v96.pos;
+	c_v96Space = rotate2D(c_v96.rot) * c_v96Space;
+	c_v96Space = scale2D(c_v96.scale) * c_v96Space;
+	c_v96Space += c_v96.pos;
+	if (false ^^ CircleCheck(c_v96Space, c_v96)) {
+		fragColor = c_v96.color;
+	}
+
+	vec2 c_v97Space = fragCoord;
+	c_v97Space -= c_v97.pos;
+	c_v97Space = rotate2D(c_v97.rot) * c_v97Space;
+	c_v97Space = scale2D(c_v97.scale) * c_v97Space;
+	c_v97Space += c_v97.pos;
+	if (false ^^ CircleCheck(c_v97Space, c_v97)) {
+		fragColor = c_v97.color;
+	}
+
+	vec2 c_v98Space = fragCoord;
+	c_v98Space -= c_v98.pos;
+	c_v98Space = rotate2D(c_v98.rot) * c_v98Space;
+	c_v98Space = scale2D(c_v98.scale) * c_v98Space;
+	c_v98Space += c_v98.pos;
+	if (false ^^ CircleCheck(c_v98Space, c_v98)) {
+		fragColor = c_v98.color;
+	}
+
+	vec2 c_v99Space = fragCoord;
+	c_v99Space -= c_v99.pos;
+	c_v99Space = rotate2D(c_v99.rot) * c_v99Space;
+	c_v99Space = scale2D(c_v99.scale) * c_v99Space;
+	c_v99Space += c_v99.pos;
+	if (false ^^ CircleCheck(c_v99Space, c_v99)) {
+		fragColor = c_v99.color;
+	}
+
+	vec2 c_v100Space = fragCoord;
+	c_v100Space -= c_v100.pos;
+	c_v100Space = rotate2D(c_v100.rot) * c_v100Space;
+	c_v100Space = scale2D(c_v100.scale) * c_v100Space;
+	c_v100Space += c_v100.pos;
+	if (false ^^ CircleCheck(c_v100Space, c_v100)) {
+		fragColor = c_v100.color;
+	}
+
+	vec2 rect_v11Space = fragCoord;
+	rect_v11Space -= rect_v11.pos;
+	rect_v11Space = rotate2D(rect_v11.rot) * rect_v11Space;
+	rect_v11Space = scale2D(rect_v11.scale) * rect_v11Space;
+	rect_v11Space += rect_v11.pos;
+	if (false ^^ RectangleCheck(rect_v11Space, rect_v11)) {
+		fragColor = rect_v11.color;
+	}
+
+	vec2 rect_v12Space = fragCoord;
+	rect_v12Space -= rect_v12.pos;
+	rect_v12Space = rotate2D(rect_v12.rot) * rect_v12Space;
+	rect_v12Space = scale2D(rect_v12.scale) * rect_v12Space;
+	rect_v12Space += rect_v12.pos;
+	if (false ^^ RectangleCheck(rect_v12Space, rect_v12)) {
+		fragColor = rect_v12.color;
+	}
+
+	vec2 rect_v13Space = fragCoord;
+	rect_v13Space -= rect_v13.pos;
+	rect_v13Space = rotate2D(rect_v13.rot) * rect_v13Space;
+	rect_v13Space = scale2D(rect_v13.scale) * rect_v13Space;
+	rect_v13Space += rect_v13.pos;
+	if (false ^^ RectangleCheck(rect_v13Space, rect_v13)) {
+		fragColor = rect_v13.color;
+	}
+
+	vec2 rect_v14Space = fragCoord;
+	rect_v14Space -= rect_v14.pos;
+	rect_v14Space = rotate2D(rect_v14.rot) * rect_v14Space;
+	rect_v14Space = scale2D(rect_v14.scale) * rect_v14Space;
+	rect_v14Space += rect_v14.pos;
+	if (false ^^ RectangleCheck(rect_v14Space, rect_v14)) {
+		fragColor = rect_v14.color;
+	}
+
+	vec2 rect_v15Space = fragCoord;
+	rect_v15Space -= rect_v15.pos;
+	rect_v15Space = rotate2D(rect_v15.rot) * rect_v15Space;
+	rect_v15Space = scale2D(rect_v15.scale) * rect_v15Space;
+	rect_v15Space += rect_v15.pos;
+	if (false ^^ RectangleCheck(rect_v15Space, rect_v15)) {
+		fragColor = rect_v15.color;
+	}
+
+	vec2 rect_v16Space = fragCoord;
+	rect_v16Space -= rect_v16.pos;
+	rect_v16Space = rotate2D(rect_v16.rot) * rect_v16Space;
+	rect_v16Space = scale2D(rect_v16.scale) * rect_v16Space;
+	rect_v16Space += rect_v16.pos;
+	if (false ^^ RectangleCheck(rect_v16Space, rect_v16)) {
+		fragColor = rect_v16.color;
+	}
+
+	vec2 rect_v17Space = fragCoord;
+	rect_v17Space -= rect_v17.pos;
+	rect_v17Space = rotate2D(rect_v17.rot) * rect_v17Space;
+	rect_v17Space = scale2D(rect_v17.scale) * rect_v17Space;
+	rect_v17Space += rect_v17.pos;
+	if (false ^^ RectangleCheck(rect_v17Space, rect_v17)) {
+		fragColor = rect_v17.color;
+	}
+
+	vec2 rect_v18Space = fragCoord;
+	rect_v18Space -= rect_v18.pos;
+	rect_v18Space = rotate2D(rect_v18.rot) * rect_v18Space;
+	rect_v18Space = scale2D(rect_v18.scale) * rect_v18Space;
+	rect_v18Space += rect_v18.pos;
+	if (false ^^ RectangleCheck(rect_v18Space, rect_v18)) {
+		fragColor = rect_v18.color;
+	}
+
+	vec2 rect_v19Space = fragCoord;
+	rect_v19Space -= rect_v19.pos;
+	rect_v19Space = rotate2D(rect_v19.rot) * rect_v19Space;
+	rect_v19Space = scale2D(rect_v19.scale) * rect_v19Space;
+	rect_v19Space += rect_v19.pos;
+	if (false ^^ RectangleCheck(rect_v19Space, rect_v19)) {
+		fragColor = rect_v19.color;
+	}
+
+	vec2 rect_v20Space = fragCoord;
+	rect_v20Space -= rect_v20.pos;
+	rect_v20Space = rotate2D(rect_v20.rot) * rect_v20Space;
+	rect_v20Space = scale2D(rect_v20.scale) * rect_v20Space;
+	rect_v20Space += rect_v20.pos;
+	if (false ^^ RectangleCheck(rect_v20Space, rect_v20)) {
+		fragColor = rect_v20.color;
+	}
+
+	vec2 rect_v21Space = fragCoord;
+	rect_v21Space -= rect_v21.pos;
+	rect_v21Space = rotate2D(rect_v21.rot) * rect_v21Space;
+	rect_v21Space = scale2D(rect_v21.scale) * rect_v21Space;
+	rect_v21Space += rect_v21.pos;
+	if (false ^^ RectangleCheck(rect_v21Space, rect_v21)) {
+		fragColor = rect_v21.color;
+	}
+
+	vec2 c_v101Space = fragCoord;
+	c_v101Space -= c_v101.pos;
+	c_v101Space = rotate2D(c_v101.rot) * c_v101Space;
+	c_v101Space = scale2D(c_v101.scale) * c_v101Space;
+	c_v101Space += c_v101.pos;
+	if (false ^^ CircleCheck(c_v101Space, c_v101)) {
+		fragColor = c_v101.color;
+	}
+
+	vec2 c_v102Space = fragCoord;
+	c_v102Space -= c_v102.pos;
+	c_v102Space = rotate2D(c_v102.rot) * c_v102Space;
+	c_v102Space = scale2D(c_v102.scale) * c_v102Space;
+	c_v102Space += c_v102.pos;
+	if (false ^^ CircleCheck(c_v102Space, c_v102)) {
+		fragColor = c_v102.color;
+	}
+
+	vec2 c_v103Space = fragCoord;
+	c_v103Space -= c_v103.pos;
+	c_v103Space = rotate2D(c_v103.rot) * c_v103Space;
+	c_v103Space = scale2D(c_v103.scale) * c_v103Space;
+	c_v103Space += c_v103.pos;
+	if (false ^^ CircleCheck(c_v103Space, c_v103)) {
+		fragColor = c_v103.color;
+	}
+
+	vec2 c_v104Space = fragCoord;
+	c_v104Space -= c_v104.pos;
+	c_v104Space = rotate2D(c_v104.rot) * c_v104Space;
+	c_v104Space = scale2D(c_v104.scale) * c_v104Space;
+	c_v104Space += c_v104.pos;
+	if (false ^^ CircleCheck(c_v104Space, c_v104)) {
+		fragColor = c_v104.color;
+	}
+
+	vec2 c_v105Space = fragCoord;
+	c_v105Space -= c_v105.pos;
+	c_v105Space = rotate2D(c_v105.rot) * c_v105Space;
+	c_v105Space = scale2D(c_v105.scale) * c_v105Space;
+	c_v105Space += c_v105.pos;
+	if (false ^^ CircleCheck(c_v105Space, c_v105)) {
+		fragColor = c_v105.color;
+	}
+
+	vec2 c_v106Space = fragCoord;
+	c_v106Space -= c_v106.pos;
+	c_v106Space = rotate2D(c_v106.rot) * c_v106Space;
+	c_v106Space = scale2D(c_v106.scale) * c_v106Space;
+	c_v106Space += c_v106.pos;
+	if (false ^^ CircleCheck(c_v106Space, c_v106)) {
+		fragColor = c_v106.color;
+	}
+
+	vec2 c_v107Space = fragCoord;
+	c_v107Space -= c_v107.pos;
+	c_v107Space = rotate2D(c_v107.rot) * c_v107Space;
+	c_v107Space = scale2D(c_v107.scale) * c_v107Space;
+	c_v107Space += c_v107.pos;
+	if (false ^^ CircleCheck(c_v107Space, c_v107)) {
+		fragColor = c_v107.color;
+	}
+
+	vec2 c_v108Space = fragCoord;
+	c_v108Space -= c_v108.pos;
+	c_v108Space = rotate2D(c_v108.rot) * c_v108Space;
+	c_v108Space = scale2D(c_v108.scale) * c_v108Space;
+	c_v108Space += c_v108.pos;
+	if (false ^^ CircleCheck(c_v108Space, c_v108)) {
+		fragColor = c_v108.color;
+	}
+
+	vec2 c_v109Space = fragCoord;
+	c_v109Space -= c_v109.pos;
+	c_v109Space = rotate2D(c_v109.rot) * c_v109Space;
+	c_v109Space = scale2D(c_v109.scale) * c_v109Space;
+	c_v109Space += c_v109.pos;
+	if (false ^^ CircleCheck(c_v109Space, c_v109)) {
+		fragColor = c_v109.color;
+	}
+
+	vec2 c_v110Space = fragCoord;
+	c_v110Space -= c_v110.pos;
+	c_v110Space = rotate2D(c_v110.rot) * c_v110Space;
+	c_v110Space = scale2D(c_v110.scale) * c_v110Space;
+	c_v110Space += c_v110.pos;
+	if (false ^^ CircleCheck(c_v110Space, c_v110)) {
+		fragColor = c_v110.color;
+	}
+
+	vec2 c_v111Space = fragCoord;
+	c_v111Space -= c_v111.pos;
+	c_v111Space = rotate2D(c_v111.rot) * c_v111Space;
+	c_v111Space = scale2D(c_v111.scale) * c_v111Space;
+	c_v111Space += c_v111.pos;
+	if (false ^^ CircleCheck(c_v111Space, c_v111)) {
+		fragColor = c_v111.color;
+	}
+
+	vec2 c_v112Space = fragCoord;
+	c_v112Space -= c_v112.pos;
+	c_v112Space = rotate2D(c_v112.rot) * c_v112Space;
+	c_v112Space = scale2D(c_v112.scale) * c_v112Space;
+	c_v112Space += c_v112.pos;
+	if (false ^^ CircleCheck(c_v112Space, c_v112)) {
+		fragColor = c_v112.color;
+	}
+
+	vec2 c_v113Space = fragCoord;
+	c_v113Space -= c_v113.pos;
+	c_v113Space = rotate2D(c_v113.rot) * c_v113Space;
+	c_v113Space = scale2D(c_v113.scale) * c_v113Space;
+	c_v113Space += c_v113.pos;
+	if (false ^^ CircleCheck(c_v113Space, c_v113)) {
+		fragColor = c_v113.color;
+	}
+
+	vec2 c_v114Space = fragCoord;
+	c_v114Space -= c_v114.pos;
+	c_v114Space = rotate2D(c_v114.rot) * c_v114Space;
+	c_v114Space = scale2D(c_v114.scale) * c_v114Space;
+	c_v114Space += c_v114.pos;
+	if (false ^^ CircleCheck(c_v114Space, c_v114)) {
+		fragColor = c_v114.color;
+	}
+
+	vec2 c_v115Space = fragCoord;
+	c_v115Space -= c_v115.pos;
+	c_v115Space = rotate2D(c_v115.rot) * c_v115Space;
+	c_v115Space = scale2D(c_v115.scale) * c_v115Space;
+	c_v115Space += c_v115.pos;
+	if (false ^^ CircleCheck(c_v115Space, c_v115)) {
+		fragColor = c_v115.color;
+	}
+
+	vec2 c_v116Space = fragCoord;
+	c_v116Space -= c_v116.pos;
+	c_v116Space = rotate2D(c_v116.rot) * c_v116Space;
+	c_v116Space = scale2D(c_v116.scale) * c_v116Space;
+	c_v116Space += c_v116.pos;
+	if (false ^^ CircleCheck(c_v116Space, c_v116)) {
+		fragColor = c_v116.color;
+	}
+
+	vec2 c_v117Space = fragCoord;
+	c_v117Space -= c_v117.pos;
+	c_v117Space = rotate2D(c_v117.rot) * c_v117Space;
+	c_v117Space = scale2D(c_v117.scale) * c_v117Space;
+	c_v117Space += c_v117.pos;
+	if (false ^^ CircleCheck(c_v117Space, c_v117)) {
+		fragColor = c_v117.color;
+	}
+
+	vec2 c_v118Space = fragCoord;
+	c_v118Space -= c_v118.pos;
+	c_v118Space = rotate2D(c_v118.rot) * c_v118Space;
+	c_v118Space = scale2D(c_v118.scale) * c_v118Space;
+	c_v118Space += c_v118.pos;
+	if (false ^^ CircleCheck(c_v118Space, c_v118)) {
+		fragColor = c_v118.color;
+	}
+
+	vec2 c_v119Space = fragCoord;
+	c_v119Space -= c_v119.pos;
+	c_v119Space = rotate2D(c_v119.rot) * c_v119Space;
+	c_v119Space = scale2D(c_v119.scale) * c_v119Space;
+	c_v119Space += c_v119.pos;
+	if (false ^^ CircleCheck(c_v119Space, c_v119)) {
+		fragColor = c_v119.color;
+	}
+
+	vec2 c_v120Space = fragCoord;
+	c_v120Space -= c_v120.pos;
+	c_v120Space = rotate2D(c_v120.rot) * c_v120Space;
+	c_v120Space = scale2D(c_v120.scale) * c_v120Space;
+	c_v120Space += c_v120.pos;
+	if (false ^^ CircleCheck(c_v120Space, c_v120)) {
+		fragColor = c_v120.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient){
+	return smoothstep(circleGradient.innerRadius, circleGradient.outerRadius, distance(point, circleGradient.pos));
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

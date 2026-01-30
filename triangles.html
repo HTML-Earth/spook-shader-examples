@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>Triangles.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// Triangles.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Empty {
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct CircleGradient {
+	float innerRadius;
+	float outerRadius;
+	vec4 innerColor;
+	vec4 outerColor;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Triangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient);
+bool TriangleCheck(vec2 point, Triangle tri);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float pulse = abs(sin(iTime*0.5));
+
+	float size = pulse*iResolution.y/4.0;
+
+	float triWidth = iResolution.y/8.0+size;
+
+	float panOffset = iResolution.x/2.0;
+
+	float centerPos = iResolution.x/2.0;
+
+	float panWidth = iResolution.x*2.0;
+
+	float triforcePan = mod((panOffset+centerPos+smoothstep(1.0, 5.0, mod(iTime, (PI*2.0)))*panWidth), (panWidth))-panOffset;
+
+	float triHeight = triWidth*0.8999999761581421;
+
+	float distance = pulse*50.0;
+
+	float rotation = smoothstep(1.0, 5.0, mod(iTime, (PI*2.0)))*360.0;
+
+	float bgRotationTime = mod(iTime, (PI*6.0));
+
+	vec4 courageDark = vec4(0.18000000715255737, 0.4399999976158142, 0.12999999523162842, 1.0);
+
+	vec4 powerDark = vec4(0.36000001430511475, 0.10000000149011612, 0.10000000149011612, 1.0);
+
+	float bgRotation3 = smoothstep(2.0+PI*4.0, 4.0+PI*4.0, bgRotationTime);
+
+	vec4 wisdomDark = vec4(0.07000000029802322, 0.20999999344348907, 0.46000000834465027, 1.0);
+
+	vec4 darkRotation2 = mix(courageDark, powerDark, bgRotation3);
+
+	float bgRotation2 = smoothstep(2.0+PI*2.0, 4.0+PI*2.0, bgRotationTime);
+
+	vec4 darkRotation1 = mix(wisdomDark, darkRotation2, bgRotation2);
+
+	float bgRotation1 = smoothstep(2.0, 4.0, bgRotationTime);
+
+	vec4 courageBright = vec4(0.3199999928474426, 0.7799999713897705, 0.25, 1.0);
+
+	vec4 powerBright = vec4(0.6899999976158142, 0.1899999976158142, 0.1899999976158142, 1.0);
+
+	vec4 wisdomBright = vec4(0.1599999964237213, 0.3100000023841858, 0.7799999713897705, 1.0);
+
+	vec4 brightRotation3 = mix(courageBright, powerBright, bgRotation3);
+
+	vec4 brightRotation2 = mix(wisdomBright, brightRotation3, bgRotation2);
+
+	vec4 brightRotation1 = mix(powerBright, brightRotation2, bgRotation1);
+
+	vec4 brightShine = vec4(1.0, 1.0, 0.0, 1.0);
+
+	vec4 brightRotation = mix(brightRotation1, brightShine, pow(max(sin(iTime+0.5), 0.0), 3.0)*0.5);
+
+	vec4 darkRotation = mix(powerDark, darkRotation1, bgRotation1);
+
+	// Object Declarations
+	Triangle triTop = Triangle(
+		vec2(triWidth, triHeight),
+		vec2(0.0+triforcePan+0.0, triHeight/2.0+distance+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		rotation,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Triangle triLeft = Triangle(
+		vec2(triWidth, triHeight),
+		vec2(-triWidth/2.0-distance+triforcePan+0.0, -triHeight/2.0-distance+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		rotation,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Triangle triRight = Triangle(
+		vec2(triWidth, triHeight),
+		vec2(triWidth/2.0+distance+triforcePan+0.0, -triHeight/2.0-distance+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		-rotation,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Empty triforce = Empty(
+		vec2(triforcePan+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	CircleGradient background = CircleGradient(
+		0.0,
+		iResolution.x/2.0,
+		vec4(brightRotation),
+		vec4(darkRotation),
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+		float background_blendValue = CircleGradientBlend(fragCoord, background);
+		vec4 background_blendedGradientColor = mix(background.innerColor, background.outerColor, background_blendValue);
+		fragColor = mix(fragColor, background_blendedGradientColor, background_blendedGradientColor.a);
+
+	vec2 triforceSpace = fragCoord;
+	triforceSpace -= triforce.pos;
+	triforceSpace = rotate2D(triforce.rot) * triforceSpace;
+	triforceSpace = scale2D(triforce.scale) * triforceSpace;
+	triforceSpace += triforce.pos;
+	
+
+	vec2 triTopSpace = triforceSpace;
+	triTopSpace -= triTop.pos;
+	triTopSpace = rotate2D(triTop.rot) * triTopSpace;
+	triTopSpace = scale2D(triTop.scale) * triTopSpace;
+	triTopSpace += triTop.pos;
+	if (false ^^ TriangleCheck(triTopSpace, triTop)) {
+		fragColor = triTop.color;
+	}
+
+	vec2 triLeftSpace = triforceSpace;
+	triLeftSpace -= triLeft.pos;
+	triLeftSpace = rotate2D(triLeft.rot) * triLeftSpace;
+	triLeftSpace = scale2D(triLeft.scale) * triLeftSpace;
+	triLeftSpace += triLeft.pos;
+	if (false ^^ TriangleCheck(triLeftSpace, triLeft)) {
+		fragColor = triLeft.color;
+	}
+
+	vec2 triRightSpace = triforceSpace;
+	triRightSpace -= triRight.pos;
+	triRightSpace = rotate2D(triRight.rot) * triRightSpace;
+	triRightSpace = scale2D(triRight.scale) * triRightSpace;
+	triRightSpace += triRight.pos;
+	if (false ^^ TriangleCheck(triRightSpace, triRight)) {
+		fragColor = triRight.color;
+	}
+
+}
+
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient){
+	return smoothstep(circleGradient.innerRadius, circleGradient.outerRadius, distance(point, circleGradient.pos));
+}
+
+bool TriangleCheck(vec2 point, Triangle tri){
+	if (point.y < tri.pos.y - (tri.size.y / 2.) || point.y > tri.pos.y + (tri.size.y / 2.))
+		return false;
+
+	vec2 pTop = vec2(tri.pos.x, tri.pos.y + (tri.size.y / 2.));
+	
+	if (point.x < tri.pos.x) {
+		vec2 pLeft = vec2(tri.pos.x - (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pTop.y - pLeft.y) / (pTop.x - pLeft.x);
+		return (point.y < angle * (point.x-pLeft.x) + pLeft.y);
+	}
+	else {
+		vec2 pRight = vec2(tri.pos.x + (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pRight.y - pTop.y) / (pRight.x - pTop.x);
+		return (point.y < angle * (point.x-pTop.x) + pTop.y);
+	}
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>BallShader.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// BallShader.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct CircleGradient {
+	float innerRadius;
+	float outerRadius;
+	vec4 innerColor;
+	vec4 outerColor;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float jumpTime = abs(sin(iTime*3.0));
+
+	float jumpHeight = 150.0;
+
+	float ballSize = 64.0;
+
+	float yPos = (jumpTime+1.0)*jumpHeight;
+
+	float shadowSize = ballSize*sin(yPos*0.009999999776482582)*0.5+(ballSize/3.0);
+
+	float shadowDarkness = shadowSize*0.004999999888241291+0.5;
+
+	vec4 ballColor = vec4(0.6000000238418579, 0.0, 0.0, 1.0);
+
+	vec4 shadowColor = vec4(0.0, 0.0, 0.0, shadowDarkness);
+
+	vec4 shinyColor = vec4(1.0, 0.6000000238418579, 0.75, 1.0);
+
+	float xPos = 150.0;
+
+	float groundHeight = 100.0;
+
+	// Object Declarations
+	Circle shadow = Circle(
+		shadowSize,
+		vec2(xPos+0.0, groundHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(shadowColor)
+	);
+
+	CircleGradient shiny = CircleGradient(
+		0.0,
+		ballSize,
+		vec4(shinyColor),
+		vec4(ballColor),
+		vec2(ballSize/2.0+xPos+0.0, ballSize-jumpTime*25.0+yPos+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	Circle ball = Circle(
+		ballSize,
+		vec2(xPos+0.0, yPos+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(ballColor)
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(0.5, 0.5, 0.5, 1.0);
+
+
+	vec2 shadowSpace = fragCoord;
+	shadowSpace -= shadow.pos;
+	shadowSpace = rotate2D(shadow.rot) * shadowSpace;
+	shadowSpace = scale2D(shadow.scale) * shadowSpace;
+	shadowSpace += shadow.pos;
+	if (false ^^ CircleCheck(shadowSpace, shadow)) {
+		fragColor = mix(fragColor, shadow.color, shadow.color.a);
+	}
+
+	vec2 ballSpace = fragCoord;
+	ballSpace -= ball.pos;
+	ballSpace = rotate2D(ball.rot) * ballSpace;
+	ballSpace = scale2D(ball.scale) * ballSpace;
+	ballSpace += ball.pos;
+	if (false ^^ CircleCheck(ballSpace, ball)) {
+		fragColor = mix(fragColor, ball.color, ball.color.a);
+		float shiny_blendValue = CircleGradientBlend(ballSpace, shiny);
+		vec4 shiny_blendedGradientColor = mix(shiny.innerColor, shiny.outerColor, shiny_blendValue);
+		fragColor = mix(fragColor, shiny_blendedGradientColor, shiny_blendedGradientColor.a);
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient){
+	return smoothstep(circleGradient.innerRadius, circleGradient.outerRadius, distance(point, circleGradient.pos));
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

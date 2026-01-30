@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>Legs.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// Legs.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Empty {
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Polygon {
+	vec2 points[16];
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool RectangleCheck(vec2 point, Rectangle rec);
+bool PolygonCheck(vec2 point, Polygon poly, int amt);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+vec4 colorFromValue(float value);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float walkSpeed = 3.0;
+
+	float upperRot = 45.0;
+
+	float upperRotBase = -40.0;
+
+	float lowerRot = 40.0;
+
+	float lowerRotBase = 90.0;
+
+	float footRot = -45.0;
+
+	float footRotBase = -75.0;
+
+	float u = iResolution.y*0.009999999776482582;
+
+	vec2 center = vec2(iResolution.x/2.0, iResolution.y/2.0);
+
+	float backgroundScroll = mod((-iTime*u*walkSpeed*20.0), (400.0*u))-200.0*u;
+
+	float backgroundScroll2 = mod(((-iTime+3.0)*u*walkSpeed*20.0), (400.0*u))-200.0*u;
+
+	vec2 backLegOffset = vec2(cos(iTime*walkSpeed+PI)*10.0*u, -sin(iTime*walkSpeed+PI)*5.0*u-5.0*u);
+
+	float backUpperRot = sin(iTime*walkSpeed+PI)*upperRot+upperRotBase;
+
+	vec4 darker = colorFromValue(0.20000000298023224);
+
+	vec2 up0 = vec2(-7.0*u, -7.0*u);
+
+	vec2 up1 = vec2(5.0*u, 8.0*u);
+
+	vec2 up2 = vec2(13.0*u, 0.0*u);
+
+	vec2 up3 = vec2(15.0*u, -20.0*u);
+
+	vec2 up4 = vec2(12.0*u, -43.0*u);
+
+	vec2 up5 = vec2(-8.0*u, -42.0*u);
+
+	float backLowerRot = cos(iTime*walkSpeed+PI*2.0)*lowerRot+lowerRotBase;
+
+	vec2 lp0 = vec2(-5.0*u, -5.0*u);
+
+	vec2 lp1 = vec2(5.0*u, -5.0*u);
+
+	vec2 lp2 = vec2(5.0*u, -45.0*u);
+
+	vec2 lp3 = vec2(-5.0*u, -45.0*u);
+
+	vec2 lp4 = vec2(-10.0*u, -30.0*u);
+
+	vec2 lp5 = vec2(-10.0*u, -10.0*u);
+
+	vec2 kp0 = vec2(5.0*u, 12.5*u);
+
+	vec2 kp1 = vec2(9.25*u, 7.25*u);
+
+	vec2 kp2 = vec2(11.5*u, 0.0*u);
+
+	vec2 kp3 = vec2(9.25*u, -7.25*u);
+
+	vec2 kp4 = vec2(5.0*u, -12.5*u);
+
+	float backFootRot = abs(sin(iTime*walkSpeed))*footRot+footRotBase;
+
+	vec4 dark = colorFromValue(0.30000001192092896);
+
+	vec4 medium = colorFromValue(0.4000000059604645);
+
+	vec4 bright = colorFromValue(0.6000000238418579);
+
+	vec2 frontLegOffset = vec2(cos(iTime*walkSpeed)*10.0*u, -sin(iTime*walkSpeed)*5.0*u-5.0*u);
+
+	float frontUpperRot = sin(iTime*walkSpeed)*upperRot+upperRotBase;
+
+	float frontLowerRot = cos(iTime*walkSpeed+PI)*lowerRot+lowerRotBase;
+
+	float frontFootRot = abs(sin(iTime*walkSpeed-PI))*footRot+footRotBase;
+
+	// Object Declarations
+	Rectangle backgroundThing = Rectangle(
+		vec2(50.0*u, iResolution.y),
+		vec2(center.x+backgroundScroll+0.0, center.y+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Rectangle backgroundThing2 = Rectangle(
+		vec2(50.0*u, iResolution.y),
+		vec2(center.x+backgroundScroll2+0.0, center.y+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle upperTopRound = Circle(
+		10.0*u,
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle upperJointBG = Circle(
+		10.0*u,
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle upperJoint = Circle(
+		6.0*u,
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Polygon upperLeg = Polygon(
+		vec2[16](
+			vec2(-7.0*u, -7.0*u),
+			vec2(5.0*u, 8.0*u),
+			vec2(13.0*u, 0.0*u),
+			vec2(15.0*u, -20.0*u),
+			vec2(12.0*u, -43.0*u),
+			vec2(-8.0*u, -42.0*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle upperC = Circle(
+		7.0*u,
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Rectangle footSupport = Rectangle(
+		vec2(2.5*u, 30.0*u),
+		vec2(7.5*u+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -29.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0-15.0,
+		vec4(darker)
+	);
+
+	Polygon lowerLeg = Polygon(
+		vec2[16](
+			vec2(-5.0*u, -5.0*u),
+			vec2(5.0*u, -5.0*u),
+			vec2(5.0*u, -45.0*u),
+			vec2(-5.0*u, -45.0*u),
+			vec2(-10.0*u, -30.0*u),
+			vec2(-10.0*u, -10.0*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle lowerC = Circle(
+		3.0*u,
+		vec2(0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Polygon kneeCap = Polygon(
+		vec2[16](
+			vec2(5.0*u, 12.5*u),
+			vec2(9.25*u, 7.25*u),
+			vec2(11.5*u, 0.0*u),
+			vec2(9.25*u, -7.25*u),
+			vec2(5.0*u, -12.5*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Rectangle footInner = Rectangle(
+		vec2(7.0*u, 15.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -25.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Rectangle footUpper = Rectangle(
+		vec2(10.0*u, 30.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -5.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Rectangle footLower = Rectangle(
+		vec2(10.0*u, 15.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -35.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle footTopRound = Circle(
+		5.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 10.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle lowerJoint = Circle(
+		8.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle footC = Circle(
+		5.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Circle footEndBall = Circle(
+		8.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Empty foot = Empty(
+		vec2(0.0+0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		backFootRot
+	);
+
+	Empty lower = Empty(
+		vec2(0.0+cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		backLowerRot
+	);
+
+	Empty upper = Empty(
+		vec2(cos(iTime*walkSpeed+PI)*10.0*u+center.x-20.0*u+0.0, -sin(iTime*walkSpeed+PI)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		backUpperRot
+	);
+
+	Rectangle seat = Rectangle(
+		vec2(15.0*u, 30.0*u),
+		vec2(20.0*u+0.0+center.x-20.0*u+0.0, 20.0*u+0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		135.0,
+		vec4(medium)
+	);
+
+	Rectangle pipeStart = Rectangle(
+		vec2(5.0*u, 15.0*u),
+		vec2(0.0+sin(iTime*40.0)*0.5*u+sin(iTime*30.0)*0.5*u-28.0*u+0.0+center.x-20.0*u+0.0, -5.0*u+0.0+sin(iTime*40.0)*1.0*u+10.0*u+0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Rectangle pipeEnd = Rectangle(
+		vec2(20.0*u, 5.0*u),
+		vec2(-7.5*u+sin(iTime*40.0)*0.5*u+sin(iTime*30.0)*0.5*u-28.0*u+0.0+center.x-20.0*u+0.0, -10.0*u+0.0+sin(iTime*40.0)*1.0*u+10.0*u+0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Empty pipe = Empty(
+		vec2(sin(iTime*40.0)*0.5*u+sin(iTime*30.0)*0.5*u-28.0*u+0.0+center.x-20.0*u+0.0, 0.0+sin(iTime*40.0)*1.0*u+10.0*u+0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		sin(iTime*30.0)*5.0
+	);
+
+	Rectangle engine = Rectangle(
+		vec2(15.0*u, 30.0*u),
+		vec2(sin(iTime*30.0)*0.5*u-28.0*u+0.0+center.x-20.0*u+0.0, sin(iTime*40.0)*1.0*u+10.0*u+0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		10.0,
+		vec4(medium)
+	);
+
+	Circle bodyShape = Circle(
+		25.0*u,
+		vec2(0.0+center.x-20.0*u+0.0, 0.0+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		sin(iTime*walkSpeed)*10.0-10.0,
+		vec4(dark)
+	);
+
+	Circle leftArm = Circle(
+		10.0*u,
+		vec2(-10.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, 0.0+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(0.699999988079071, 3.0),
+		110.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Rectangle shotGun = Rectangle(
+		vec2(70.0*u, 10.0*u),
+		vec2(0.0+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, 0.0+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(darker)
+	);
+
+	Rectangle pump = Rectangle(
+		vec2(30.0*u, 10.0*u),
+		vec2(15.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, -5.0*u+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.59, 0.29, 0.0, 1.0)
+	);
+
+	Rectangle handle = Rectangle(
+		vec2(10.0*u, 30.0*u),
+		vec2(-40.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, -10.0*u+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		30.0,
+		vec4(0.59, 0.29, 0.0, 1.0)
+	);
+
+	Circle leftHand = Circle(
+		5.0*u,
+		vec2(15.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, -10.0*u+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(2.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Circle rightArm = Circle(
+		10.0*u,
+		vec2(-60.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, 5.0*u+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(0.699999988079071, 3.0),
+		135.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Circle rightHand = Circle(
+		10.0*u,
+		vec2(-40.0*u+sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, -10.0*u+sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(0.699999988079071, 1.0),
+		30.0,
+		vec4(1.0, 1.0, 0.0, 1.0)
+	);
+
+	Empty arms = Empty(
+		vec2(sin(iTime*walkSpeed+PI)*20.0*u+90.0*u+center.x-20.0*u+0.0, sin(iTime*walkSpeed+PI)*30.0*u+30.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		sin(iTime*walkSpeed)*30.0
+	);
+
+	Circle upperTopRound_v1 = Circle(
+		10.0*u,
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle upperJointBG_v1 = Circle(
+		10.0*u,
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(dark)
+	);
+
+	Circle upperJoint_v1 = Circle(
+		6.0*u,
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Polygon upperLeg_v1 = Polygon(
+		vec2[16](
+			vec2(-7.0*u, -7.0*u),
+			vec2(5.0*u, 8.0*u),
+			vec2(13.0*u, 0.0*u),
+			vec2(15.0*u, -20.0*u),
+			vec2(12.0*u, -43.0*u),
+			vec2(-8.0*u, -42.0*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle upperC_v1 = Circle(
+		7.0*u,
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Rectangle footSupport_v1 = Rectangle(
+		vec2(2.5*u, 30.0*u),
+		vec2(7.5*u+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -29.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0-15.0,
+		vec4(bright)
+	);
+
+	Polygon lowerLeg_v1 = Polygon(
+		vec2[16](
+			vec2(-5.0*u, -5.0*u),
+			vec2(5.0*u, -5.0*u),
+			vec2(5.0*u, -45.0*u),
+			vec2(-5.0*u, -45.0*u),
+			vec2(-10.0*u, -30.0*u),
+			vec2(-10.0*u, -10.0*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle lowerC_v1 = Circle(
+		3.0*u,
+		vec2(0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Polygon kneeCap_v1 = Polygon(
+		vec2[16](
+			vec2(5.0*u, 12.5*u),
+			vec2(9.25*u, 7.25*u),
+			vec2(11.5*u, 0.0*u),
+			vec2(9.25*u, -7.25*u),
+			vec2(5.0*u, -12.5*u),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Rectangle footInner_v1 = Rectangle(
+		vec2(7.0*u, 15.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -25.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(dark)
+	);
+
+	Rectangle footUpper_v1 = Rectangle(
+		vec2(10.0*u, 30.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -5.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Rectangle footLower_v1 = Rectangle(
+		vec2(10.0*u, 15.0*u),
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -35.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle footTopRound_v1 = Circle(
+		5.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 10.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle lowerJoint_v1 = Circle(
+		8.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(medium)
+	);
+
+	Circle footC_v1 = Circle(
+		5.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, 0.0+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Circle footEndBall_v1 = Circle(
+		8.0*u,
+		vec2(0.0+0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bright)
+	);
+
+	Empty foot_v1 = Empty(
+		vec2(0.0+0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		frontFootRot
+	);
+
+	Empty lower_v1 = Empty(
+		vec2(0.0+cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -45.0*u+-sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		frontLowerRot
+	);
+
+	Empty upper_v1 = Empty(
+		vec2(cos(iTime*walkSpeed)*10.0*u+center.x-20.0*u+0.0, -sin(iTime*walkSpeed)*5.0*u-5.0*u+center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		frontUpperRot
+	);
+
+	Empty body = Empty(
+		vec2(center.x-20.0*u+0.0, center.y+sin(iTime*walkSpeed*2.0)*5.0*u+40.0*u+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(1.0, 0.5, 0.0, 1.0);
+
+
+	vec2 backgroundThingSpace = fragCoord;
+	backgroundThingSpace -= backgroundThing.pos;
+	backgroundThingSpace = rotate2D(backgroundThing.rot) * backgroundThingSpace;
+	backgroundThingSpace = scale2D(backgroundThing.scale) * backgroundThingSpace;
+	backgroundThingSpace += backgroundThing.pos;
+	if (false ^^ RectangleCheck(backgroundThingSpace, backgroundThing)) {
+		fragColor = backgroundThing.color;
+	}
+
+	vec2 backgroundThing2Space = fragCoord;
+	backgroundThing2Space -= backgroundThing2.pos;
+	backgroundThing2Space = rotate2D(backgroundThing2.rot) * backgroundThing2Space;
+	backgroundThing2Space = scale2D(backgroundThing2.scale) * backgroundThing2Space;
+	backgroundThing2Space += backgroundThing2.pos;
+	if (false ^^ RectangleCheck(backgroundThing2Space, backgroundThing2)) {
+		fragColor = backgroundThing2.color;
+	}
+
+	vec2 bodySpace = fragCoord;
+	bodySpace -= body.pos;
+	bodySpace = rotate2D(body.rot) * bodySpace;
+	bodySpace = scale2D(body.scale) * bodySpace;
+	bodySpace += body.pos;
+	
+
+	vec2 upperSpace = bodySpace;
+	upperSpace -= upper.pos;
+	upperSpace = rotate2D(upper.rot) * upperSpace;
+	upperSpace = scale2D(upper.scale) * upperSpace;
+	upperSpace += upper.pos;
+	
+
+	vec2 upperTopRoundSpace = upperSpace;
+	upperTopRoundSpace -= upperTopRound.pos;
+	upperTopRoundSpace = rotate2D(upperTopRound.rot) * upperTopRoundSpace;
+	upperTopRoundSpace = scale2D(upperTopRound.scale) * upperTopRoundSpace;
+	upperTopRoundSpace += upperTopRound.pos;
+	if (false ^^ CircleCheck(upperTopRoundSpace, upperTopRound)) {
+		fragColor = mix(fragColor, upperTopRound.color, upperTopRound.color.a);
+	}
+
+	vec2 upperJointBGSpace = upperSpace;
+	upperJointBGSpace -= upperJointBG.pos;
+	upperJointBGSpace = rotate2D(upperJointBG.rot) * upperJointBGSpace;
+	upperJointBGSpace = scale2D(upperJointBG.scale) * upperJointBGSpace;
+	upperJointBGSpace += upperJointBG.pos;
+	if (false ^^ CircleCheck(upperJointBGSpace, upperJointBG)) {
+		fragColor = mix(fragColor, upperJointBG.color, upperJointBG.color.a);
+	}
+
+	vec2 upperJointSpace = upperSpace;
+	upperJointSpace -= upperJoint.pos;
+	upperJointSpace = rotate2D(upperJoint.rot) * upperJointSpace;
+	upperJointSpace = scale2D(upperJoint.scale) * upperJointSpace;
+	upperJointSpace += upperJoint.pos;
+	if (false ^^ CircleCheck(upperJointSpace, upperJoint)) {
+		fragColor = mix(fragColor, upperJoint.color, upperJoint.color.a);
+	}
+
+	vec2 upperLegSpace = upperSpace;
+	upperLegSpace -= upperLeg.pos;
+	upperLegSpace = rotate2D(upperLeg.rot) * upperLegSpace;
+	upperLegSpace = scale2D(upperLeg.scale) * upperLegSpace;
+	upperLegSpace += upperLeg.pos;
+	if (false ^^ PolygonCheck(upperLegSpace, upperLeg, 6)) {
+		fragColor = mix(fragColor, upperLeg.color, upperLeg.color.a);
+	}
+
+	vec2 upperCSpace = upperSpace;
+	upperCSpace -= upperC.pos;
+	upperCSpace = rotate2D(upperC.rot) * upperCSpace;
+	upperCSpace = scale2D(upperC.scale) * upperCSpace;
+	upperCSpace += upperC.pos;
+	if (false ^^ CircleCheck(upperCSpace, upperC)) {
+		fragColor = mix(fragColor, upperC.color, upperC.color.a);
+	}
+
+	vec2 lowerSpace = upperSpace;
+	lowerSpace -= lower.pos;
+	lowerSpace = rotate2D(lower.rot) * lowerSpace;
+	lowerSpace = scale2D(lower.scale) * lowerSpace;
+	lowerSpace += lower.pos;
+	
+
+	vec2 footSupportSpace = lowerSpace;
+	footSupportSpace -= footSupport.pos;
+	footSupportSpace = rotate2D(footSupport.rot) * footSupportSpace;
+	footSupportSpace = scale2D(footSupport.scale) * footSupportSpace;
+	footSupportSpace += footSupport.pos;
+	if (false ^^ RectangleCheck(footSupportSpace, footSupport)) {
+		fragColor = mix(fragColor, footSupport.color, footSupport.color.a);
+	}
+
+	vec2 lowerLegSpace = lowerSpace;
+	lowerLegSpace -= lowerLeg.pos;
+	lowerLegSpace = rotate2D(lowerLeg.rot) * lowerLegSpace;
+	lowerLegSpace = scale2D(lowerLeg.scale) * lowerLegSpace;
+	lowerLegSpace += lowerLeg.pos;
+	if (false ^^ PolygonCheck(lowerLegSpace, lowerLeg, 6)) {
+		fragColor = mix(fragColor, lowerLeg.color, lowerLeg.color.a);
+	}
+
+	vec2 lowerCSpace = lowerSpace;
+	lowerCSpace -= lowerC.pos;
+	lowerCSpace = rotate2D(lowerC.rot) * lowerCSpace;
+	lowerCSpace = scale2D(lowerC.scale) * lowerCSpace;
+	lowerCSpace += lowerC.pos;
+	if (false ^^ CircleCheck(lowerCSpace, lowerC)) {
+		fragColor = mix(fragColor, lowerC.color, lowerC.color.a);
+	}
+
+	vec2 kneeCapSpace = lowerSpace;
+	kneeCapSpace -= kneeCap.pos;
+	kneeCapSpace = rotate2D(kneeCap.rot) * kneeCapSpace;
+	kneeCapSpace = scale2D(kneeCap.scale) * kneeCapSpace;
+	kneeCapSpace += kneeCap.pos;
+	if (false ^^ PolygonCheck(kneeCapSpace, kneeCap, 5)) {
+		fragColor = mix(fragColor, kneeCap.color, kneeCap.color.a);
+	}
+
+	vec2 footSpace = lowerSpace;
+	footSpace -= foot.pos;
+	footSpace = rotate2D(foot.rot) * footSpace;
+	footSpace = scale2D(foot.scale) * footSpace;
+	footSpace += foot.pos;
+	
+
+	vec2 footInnerSpace = footSpace;
+	footInnerSpace -= footInner.pos;
+	footInnerSpace = rotate2D(footInner.rot) * footInnerSpace;
+	footInnerSpace = scale2D(footInner.scale) * footInnerSpace;
+	footInnerSpace += footInner.pos;
+	if (false ^^ RectangleCheck(footInnerSpace, footInner)) {
+		fragColor = mix(fragColor, footInner.color, footInner.color.a);
+	}
+
+	vec2 footUpperSpace = footSpace;
+	footUpperSpace -= footUpper.pos;
+	footUpperSpace = rotate2D(footUpper.rot) * footUpperSpace;
+	footUpperSpace = scale2D(footUpper.scale) * footUpperSpace;
+	footUpperSpace += footUpper.pos;
+	if (false ^^ RectangleCheck(footUpperSpace, footUpper)) {
+		fragColor = mix(fragColor, footUpper.color, footUpper.color.a);
+	}
+
+	vec2 footLowerSpace = footSpace;
+	footLowerSpace -= footLower.pos;
+	footLowerSpace = rotate2D(footLower.rot) * footLowerSpace;
+	footLowerSpace = scale2D(footLower.scale) * footLowerSpace;
+	footLowerSpace += footLower.pos;
+	if (false ^^ RectangleCheck(footLowerSpace, footLower)) {
+		fragColor = mix(fragColor, footLower.color, footLower.color.a);
+	}
+
+	vec2 footTopRoundSpace = footSpace;
+	footTopRoundSpace -= footTopRound.pos;
+	footTopRoundSpace = rotate2D(footTopRound.rot) * footTopRoundSpace;
+	footTopRoundSpace = scale2D(footTopRound.scale) * footTopRoundSpace;
+	footTopRoundSpace += footTopRound.pos;
+	if (false ^^ CircleCheck(footTopRoundSpace, footTopRound)) {
+		fragColor = mix(fragColor, footTopRound.color, footTopRound.color.a);
+	}
+
+	vec2 lowerJointSpace = footSpace;
+	lowerJointSpace -= lowerJoint.pos;
+	lowerJointSpace = rotate2D(lowerJoint.rot) * lowerJointSpace;
+	lowerJointSpace = scale2D(lowerJoint.scale) * lowerJointSpace;
+	lowerJointSpace += lowerJoint.pos;
+	if (false ^^ CircleCheck(lowerJointSpace, lowerJoint)) {
+		fragColor = mix(fragColor, lowerJoint.color, lowerJoint.color.a);
+	}
+
+	vec2 footCSpace = footSpace;
+	footCSpace -= footC.pos;
+	footCSpace = rotate2D(footC.rot) * footCSpace;
+	footCSpace = scale2D(footC.scale) * footCSpace;
+	footCSpace += footC.pos;
+	if (false ^^ CircleCheck(footCSpace, footC)) {
+		fragColor = mix(fragColor, footC.color, footC.color.a);
+	}
+
+	vec2 footEndBallSpace = footSpace;
+	footEndBallSpace -= footEndBall.pos;
+	footEndBallSpace = rotate2D(footEndBall.rot) * footEndBallSpace;
+	footEndBallSpace = scale2D(footEndBall.scale) * footEndBallSpace;
+	footEndBallSpace += footEndBall.pos;
+	if (false ^^ CircleCheck(footEndBallSpace, footEndBall)) {
+		fragColor = mix(fragColor, footEndBall.color, footEndBall.color.a);
+	}
+
+	vec2 bodyShapeSpace = bodySpace;
+	bodyShapeSpace -= bodyShape.pos;
+	bodyShapeSpace = rotate2D(bodyShape.rot) * bodyShapeSpace;
+	bodyShapeSpace = scale2D(bodyShape.scale) * bodyShapeSpace;
+	bodyShapeSpace += bodyShape.pos;
+	if (false ^^ CircleCheck(bodyShapeSpace, bodyShape)) {
+		fragColor = mix(fragColor, bodyShape.color, bodyShape.color.a);
+	}
+
+	vec2 seatSpace = bodyShapeSpace;
+	seatSpace -= seat.pos;
+	seatSpace = rotate2D(seat.rot) * seatSpace;
+	seatSpace = scale2D(seat.scale) * seatSpace;
+	seatSpace += seat.pos;
+	if (false ^^ RectangleCheck(seatSpace, seat)) {
+		fragColor = mix(fragColor, seat.color, seat.color.a);
+	}
+
+	vec2 engineSpace = bodyShapeSpace;
+	engineSpace -= engine.pos;
+	engineSpace = rotate2D(engine.rot) * engineSpace;
+	engineSpace = scale2D(engine.scale) * engineSpace;
+	engineSpace += engine.pos;
+	if (false ^^ RectangleCheck(engineSpace, engine)) {
+		fragColor = mix(fragColor, engine.color, engine.color.a);
+	}
+
+	vec2 pipeSpace = engineSpace;
+	pipeSpace -= pipe.pos;
+	pipeSpace = rotate2D(pipe.rot) * pipeSpace;
+	pipeSpace = scale2D(pipe.scale) * pipeSpace;
+	pipeSpace += pipe.pos;
+	
+
+	vec2 pipeStartSpace = pipeSpace;
+	pipeStartSpace -= pipeStart.pos;
+	pipeStartSpace = rotate2D(pipeStart.rot) * pipeStartSpace;
+	pipeStartSpace = scale2D(pipeStart.scale) * pipeStartSpace;
+	pipeStartSpace += pipeStart.pos;
+	if (false ^^ RectangleCheck(pipeStartSpace, pipeStart)) {
+		fragColor = mix(fragColor, pipeStart.color, pipeStart.color.a);
+	}
+
+	vec2 pipeEndSpace = pipeSpace;
+	pipeEndSpace -= pipeEnd.pos;
+	pipeEndSpace = rotate2D(pipeEnd.rot) * pipeEndSpace;
+	pipeEndSpace = scale2D(pipeEnd.scale) * pipeEndSpace;
+	pipeEndSpace += pipeEnd.pos;
+	if (false ^^ RectangleCheck(pipeEndSpace, pipeEnd)) {
+		fragColor = mix(fragColor, pipeEnd.color, pipeEnd.color.a);
+	}
+
+	vec2 armsSpace = bodySpace;
+	armsSpace -= arms.pos;
+	armsSpace = rotate2D(arms.rot) * armsSpace;
+	armsSpace = scale2D(arms.scale) * armsSpace;
+	armsSpace += arms.pos;
+	
+
+	vec2 leftArmSpace = armsSpace;
+	leftArmSpace -= leftArm.pos;
+	leftArmSpace = rotate2D(leftArm.rot) * leftArmSpace;
+	leftArmSpace = scale2D(leftArm.scale) * leftArmSpace;
+	leftArmSpace += leftArm.pos;
+	if (false ^^ CircleCheck(leftArmSpace, leftArm)) {
+		fragColor = leftArm.color;
+	}
+
+	vec2 shotGunSpace = armsSpace;
+	shotGunSpace -= shotGun.pos;
+	shotGunSpace = rotate2D(shotGun.rot) * shotGunSpace;
+	shotGunSpace = scale2D(shotGun.scale) * shotGunSpace;
+	shotGunSpace += shotGun.pos;
+	if (false ^^ RectangleCheck(shotGunSpace, shotGun)) {
+		fragColor = mix(fragColor, shotGun.color, shotGun.color.a);
+	}
+
+	vec2 pumpSpace = armsSpace;
+	pumpSpace -= pump.pos;
+	pumpSpace = rotate2D(pump.rot) * pumpSpace;
+	pumpSpace = scale2D(pump.scale) * pumpSpace;
+	pumpSpace += pump.pos;
+	if (false ^^ RectangleCheck(pumpSpace, pump)) {
+		fragColor = pump.color;
+	}
+
+	vec2 handleSpace = armsSpace;
+	handleSpace -= handle.pos;
+	handleSpace = rotate2D(handle.rot) * handleSpace;
+	handleSpace = scale2D(handle.scale) * handleSpace;
+	handleSpace += handle.pos;
+	if (false ^^ RectangleCheck(handleSpace, handle)) {
+		fragColor = handle.color;
+	}
+
+	vec2 leftHandSpace = armsSpace;
+	leftHandSpace -= leftHand.pos;
+	leftHandSpace = rotate2D(leftHand.rot) * leftHandSpace;
+	leftHandSpace = scale2D(leftHand.scale) * leftHandSpace;
+	leftHandSpace += leftHand.pos;
+	if (false ^^ CircleCheck(leftHandSpace, leftHand)) {
+		fragColor = leftHand.color;
+	}
+
+	vec2 rightArmSpace = armsSpace;
+	rightArmSpace -= rightArm.pos;
+	rightArmSpace = rotate2D(rightArm.rot) * rightArmSpace;
+	rightArmSpace = scale2D(rightArm.scale) * rightArmSpace;
+	rightArmSpace += rightArm.pos;
+	if (false ^^ CircleCheck(rightArmSpace, rightArm)) {
+		fragColor = rightArm.color;
+	}
+
+	vec2 rightHandSpace = armsSpace;
+	rightHandSpace -= rightHand.pos;
+	rightHandSpace = rotate2D(rightHand.rot) * rightHandSpace;
+	rightHandSpace = scale2D(rightHand.scale) * rightHandSpace;
+	rightHandSpace += rightHand.pos;
+	if (false ^^ CircleCheck(rightHandSpace, rightHand)) {
+		fragColor = rightHand.color;
+	}
+
+	vec2 upper_v1Space = bodySpace;
+	upper_v1Space -= upper_v1.pos;
+	upper_v1Space = rotate2D(upper_v1.rot) * upper_v1Space;
+	upper_v1Space = scale2D(upper_v1.scale) * upper_v1Space;
+	upper_v1Space += upper_v1.pos;
+	
+
+	vec2 upperTopRound_v1Space = upper_v1Space;
+	upperTopRound_v1Space -= upperTopRound_v1.pos;
+	upperTopRound_v1Space = rotate2D(upperTopRound_v1.rot) * upperTopRound_v1Space;
+	upperTopRound_v1Space = scale2D(upperTopRound_v1.scale) * upperTopRound_v1Space;
+	upperTopRound_v1Space += upperTopRound_v1.pos;
+	if (false ^^ CircleCheck(upperTopRound_v1Space, upperTopRound_v1)) {
+		fragColor = mix(fragColor, upperTopRound_v1.color, upperTopRound_v1.color.a);
+	}
+
+	vec2 upperJointBG_v1Space = upper_v1Space;
+	upperJointBG_v1Space -= upperJointBG_v1.pos;
+	upperJointBG_v1Space = rotate2D(upperJointBG_v1.rot) * upperJointBG_v1Space;
+	upperJointBG_v1Space = scale2D(upperJointBG_v1.scale) * upperJointBG_v1Space;
+	upperJointBG_v1Space += upperJointBG_v1.pos;
+	if (false ^^ CircleCheck(upperJointBG_v1Space, upperJointBG_v1)) {
+		fragColor = mix(fragColor, upperJointBG_v1.color, upperJointBG_v1.color.a);
+	}
+
+	vec2 upperJoint_v1Space = upper_v1Space;
+	upperJoint_v1Space -= upperJoint_v1.pos;
+	upperJoint_v1Space = rotate2D(upperJoint_v1.rot) * upperJoint_v1Space;
+	upperJoint_v1Space = scale2D(upperJoint_v1.scale) * upperJoint_v1Space;
+	upperJoint_v1Space += upperJoint_v1.pos;
+	if (false ^^ CircleCheck(upperJoint_v1Space, upperJoint_v1)) {
+		fragColor = mix(fragColor, upperJoint_v1.color, upperJoint_v1.color.a);
+	}
+
+	vec2 upperLeg_v1Space = upper_v1Space;
+	upperLeg_v1Space -= upperLeg_v1.pos;
+	upperLeg_v1Space = rotate2D(upperLeg_v1.rot) * upperLeg_v1Space;
+	upperLeg_v1Space = scale2D(upperLeg_v1.scale) * upperLeg_v1Space;
+	upperLeg_v1Space += upperLeg_v1.pos;
+	if (false ^^ PolygonCheck(upperLeg_v1Space, upperLeg_v1, 6)) {
+		fragColor = mix(fragColor, upperLeg_v1.color, upperLeg_v1.color.a);
+	}
+
+	vec2 upperC_v1Space = upper_v1Space;
+	upperC_v1Space -= upperC_v1.pos;
+	upperC_v1Space = rotate2D(upperC_v1.rot) * upperC_v1Space;
+	upperC_v1Space = scale2D(upperC_v1.scale) * upperC_v1Space;
+	upperC_v1Space += upperC_v1.pos;
+	if (false ^^ CircleCheck(upperC_v1Space, upperC_v1)) {
+		fragColor = mix(fragColor, upperC_v1.color, upperC_v1.color.a);
+	}
+
+	vec2 lower_v1Space = upper_v1Space;
+	lower_v1Space -= lower_v1.pos;
+	lower_v1Space = rotate2D(lower_v1.rot) * lower_v1Space;
+	lower_v1Space = scale2D(lower_v1.scale) * lower_v1Space;
+	lower_v1Space += lower_v1.pos;
+	
+
+	vec2 footSupport_v1Space = lower_v1Space;
+	footSupport_v1Space -= footSupport_v1.pos;
+	footSupport_v1Space = rotate2D(footSupport_v1.rot) * footSupport_v1Space;
+	footSupport_v1Space = scale2D(footSupport_v1.scale) * footSupport_v1Space;
+	footSupport_v1Space += footSupport_v1.pos;
+	if (false ^^ RectangleCheck(footSupport_v1Space, footSupport_v1)) {
+		fragColor = mix(fragColor, footSupport_v1.color, footSupport_v1.color.a);
+	}
+
+	vec2 lowerLeg_v1Space = lower_v1Space;
+	lowerLeg_v1Space -= lowerLeg_v1.pos;
+	lowerLeg_v1Space = rotate2D(lowerLeg_v1.rot) * lowerLeg_v1Space;
+	lowerLeg_v1Space = scale2D(lowerLeg_v1.scale) * lowerLeg_v1Space;
+	lowerLeg_v1Space += lowerLeg_v1.pos;
+	if (false ^^ PolygonCheck(lowerLeg_v1Space, lowerLeg_v1, 6)) {
+		fragColor = mix(fragColor, lowerLeg_v1.color, lowerLeg_v1.color.a);
+	}
+
+	vec2 lowerC_v1Space = lower_v1Space;
+	lowerC_v1Space -= lowerC_v1.pos;
+	lowerC_v1Space = rotate2D(lowerC_v1.rot) * lowerC_v1Space;
+	lowerC_v1Space = scale2D(lowerC_v1.scale) * lowerC_v1Space;
+	lowerC_v1Space += lowerC_v1.pos;
+	if (false ^^ CircleCheck(lowerC_v1Space, lowerC_v1)) {
+		fragColor = mix(fragColor, lowerC_v1.color, lowerC_v1.color.a);
+	}
+
+	vec2 kneeCap_v1Space = lower_v1Space;
+	kneeCap_v1Space -= kneeCap_v1.pos;
+	kneeCap_v1Space = rotate2D(kneeCap_v1.rot) * kneeCap_v1Space;
+	kneeCap_v1Space = scale2D(kneeCap_v1.scale) * kneeCap_v1Space;
+	kneeCap_v1Space += kneeCap_v1.pos;
+	if (false ^^ PolygonCheck(kneeCap_v1Space, kneeCap_v1, 5)) {
+		fragColor = mix(fragColor, kneeCap_v1.color, kneeCap_v1.color.a);
+	}
+
+	vec2 foot_v1Space = lower_v1Space;
+	foot_v1Space -= foot_v1.pos;
+	foot_v1Space = rotate2D(foot_v1.rot) * foot_v1Space;
+	foot_v1Space = scale2D(foot_v1.scale) * foot_v1Space;
+	foot_v1Space += foot_v1.pos;
+	
+
+	vec2 footInner_v1Space = foot_v1Space;
+	footInner_v1Space -= footInner_v1.pos;
+	footInner_v1Space = rotate2D(footInner_v1.rot) * footInner_v1Space;
+	footInner_v1Space = scale2D(footInner_v1.scale) * footInner_v1Space;
+	footInner_v1Space += footInner_v1.pos;
+	if (false ^^ RectangleCheck(footInner_v1Space, footInner_v1)) {
+		fragColor = mix(fragColor, footInner_v1.color, footInner_v1.color.a);
+	}
+
+	vec2 footUpper_v1Space = foot_v1Space;
+	footUpper_v1Space -= footUpper_v1.pos;
+	footUpper_v1Space = rotate2D(footUpper_v1.rot) * footUpper_v1Space;
+	footUpper_v1Space = scale2D(footUpper_v1.scale) * footUpper_v1Space;
+	footUpper_v1Space += footUpper_v1.pos;
+	if (false ^^ RectangleCheck(footUpper_v1Space, footUpper_v1)) {
+		fragColor = mix(fragColor, footUpper_v1.color, footUpper_v1.color.a);
+	}
+
+	vec2 footLower_v1Space = foot_v1Space;
+	footLower_v1Space -= footLower_v1.pos;
+	footLower_v1Space = rotate2D(footLower_v1.rot) * footLower_v1Space;
+	footLower_v1Space = scale2D(footLower_v1.scale) * footLower_v1Space;
+	footLower_v1Space += footLower_v1.pos;
+	if (false ^^ RectangleCheck(footLower_v1Space, footLower_v1)) {
+		fragColor = mix(fragColor, footLower_v1.color, footLower_v1.color.a);
+	}
+
+	vec2 footTopRound_v1Space = foot_v1Space;
+	footTopRound_v1Space -= footTopRound_v1.pos;
+	footTopRound_v1Space = rotate2D(footTopRound_v1.rot) * footTopRound_v1Space;
+	footTopRound_v1Space = scale2D(footTopRound_v1.scale) * footTopRound_v1Space;
+	footTopRound_v1Space += footTopRound_v1.pos;
+	if (false ^^ CircleCheck(footTopRound_v1Space, footTopRound_v1)) {
+		fragColor = mix(fragColor, footTopRound_v1.color, footTopRound_v1.color.a);
+	}
+
+	vec2 lowerJoint_v1Space = foot_v1Space;
+	lowerJoint_v1Space -= lowerJoint_v1.pos;
+	lowerJoint_v1Space = rotate2D(lowerJoint_v1.rot) * lowerJoint_v1Space;
+	lowerJoint_v1Space = scale2D(lowerJoint_v1.scale) * lowerJoint_v1Space;
+	lowerJoint_v1Space += lowerJoint_v1.pos;
+	if (false ^^ CircleCheck(lowerJoint_v1Space, lowerJoint_v1)) {
+		fragColor = mix(fragColor, lowerJoint_v1.color, lowerJoint_v1.color.a);
+	}
+
+	vec2 footC_v1Space = foot_v1Space;
+	footC_v1Space -= footC_v1.pos;
+	footC_v1Space = rotate2D(footC_v1.rot) * footC_v1Space;
+	footC_v1Space = scale2D(footC_v1.scale) * footC_v1Space;
+	footC_v1Space += footC_v1.pos;
+	if (false ^^ CircleCheck(footC_v1Space, footC_v1)) {
+		fragColor = mix(fragColor, footC_v1.color, footC_v1.color.a);
+	}
+
+	vec2 footEndBall_v1Space = foot_v1Space;
+	footEndBall_v1Space -= footEndBall_v1.pos;
+	footEndBall_v1Space = rotate2D(footEndBall_v1.rot) * footEndBall_v1Space;
+	footEndBall_v1Space = scale2D(footEndBall_v1.scale) * footEndBall_v1Space;
+	footEndBall_v1Space += footEndBall_v1.pos;
+	if (false ^^ CircleCheck(footEndBall_v1Space, footEndBall_v1)) {
+		fragColor = mix(fragColor, footEndBall_v1.color, footEndBall_v1.color.a);
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+bool PolygonCheck(vec2 point, Polygon poly, int amt){
+	    float angle = 0.0;
+    for (int i = 0; i < amt; i++) {
+        vec2 a = vec2(poly.points[i]-point+poly.pos);
+        
+        vec2 b;
+        
+        if (i < amt-1)
+        	b = vec2(poly.points[i+1]-point+poly.pos);
+        else
+            b = vec2(poly.points[0]-point+poly.pos);
+        
+        angle += abs( acos( dot(a,b) / ( length(a) * length(b) ) ) );
+    }
+    angle *= 180.0 / PI;
+    return angle < 361.0 && angle > 359.0;
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+vec4 colorFromValue(float value){
+	vec4 color = vec4(value, value, value, 1.0);
+	return color;
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

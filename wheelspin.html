@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>SpinTheWheel.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// SpinTheWheel.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Empty {
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Triangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool RectangleCheck(vec2 point, Rectangle rec);
+bool TriangleCheck(vec2 point, Triangle tri);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	vec2 center = vec2(iResolution.x/2.0, iResolution.y/2.0);
+
+	float rps = 5.0;
+
+	// Object Declarations
+	Rectangle left = Rectangle(
+		vec2(iResolution.x, iResolution.y),
+		vec2(-iResolution.x/2.0+iResolution.x/2.0+0.0, 0.0+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 0.0, 1.0)
+	);
+
+	Rectangle right = Rectangle(
+		vec2(iResolution.x, iResolution.y),
+		vec2(iResolution.x/2.0+iResolution.x/2.0+0.0, 0.0+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 1.0, 1.0)
+	);
+
+	Circle background = Circle(
+		iResolution.y*0.4000000059604645,
+		vec2(0.0+iResolution.x/2.0+0.0, 0.0+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Empty wheel = Empty(
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		mod((iTime*360.0*rps), 360.0)
+	);
+
+	Triangle arrow = Triangle(
+		vec2(iResolution.y/10.0, iResolution.y/10.0),
+		vec2(iResolution.x/2.0+0.0, iResolution.y*0.8999999761581421+0.0),
+		vec2(1.0, 1.0),
+		180.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+
+
+	vec2 wheelSpace = fragCoord;
+	wheelSpace -= wheel.pos;
+	wheelSpace = rotate2D(wheel.rot) * wheelSpace;
+	wheelSpace = scale2D(wheel.scale) * wheelSpace;
+	wheelSpace += wheel.pos;
+	
+
+	vec2 leftSpace = wheelSpace;
+	leftSpace -= left.pos;
+	leftSpace = rotate2D(left.rot) * leftSpace;
+	leftSpace = scale2D(left.scale) * leftSpace;
+	leftSpace += left.pos;
+	if (false ^^ RectangleCheck(leftSpace, left)) {
+		fragColor = left.color;
+	}
+
+	vec2 rightSpace = wheelSpace;
+	rightSpace -= right.pos;
+	rightSpace = rotate2D(right.rot) * rightSpace;
+	rightSpace = scale2D(right.scale) * rightSpace;
+	rightSpace += right.pos;
+	if (false ^^ RectangleCheck(rightSpace, right)) {
+		fragColor = right.color;
+	}
+
+	vec2 backgroundSpace = wheelSpace;
+	backgroundSpace -= background.pos;
+	backgroundSpace = rotate2D(background.rot) * backgroundSpace;
+	backgroundSpace = scale2D(background.scale) * backgroundSpace;
+	backgroundSpace += background.pos;
+	if (true ^^ CircleCheck(backgroundSpace, background)) {
+		fragColor = background.color;
+	}
+
+	vec2 arrowSpace = fragCoord;
+	arrowSpace -= arrow.pos;
+	arrowSpace = rotate2D(arrow.rot) * arrowSpace;
+	arrowSpace = scale2D(arrow.scale) * arrowSpace;
+	arrowSpace += arrow.pos;
+	if (false ^^ TriangleCheck(arrowSpace, arrow)) {
+		fragColor = arrow.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+bool TriangleCheck(vec2 point, Triangle tri){
+	if (point.y < tri.pos.y - (tri.size.y / 2.) || point.y > tri.pos.y + (tri.size.y / 2.))
+		return false;
+
+	vec2 pTop = vec2(tri.pos.x, tri.pos.y + (tri.size.y / 2.));
+	
+	if (point.x < tri.pos.x) {
+		vec2 pLeft = vec2(tri.pos.x - (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pTop.y - pLeft.y) / (pTop.x - pLeft.x);
+		return (point.y < angle * (point.x-pLeft.x) + pLeft.y);
+	}
+	else {
+		vec2 pRight = vec2(tri.pos.x + (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pRight.y - pTop.y) / (pRight.x - pTop.x);
+		return (point.y < angle * (point.x-pTop.x) + pTop.y);
+	}
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>BigSpook.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// BigSpook.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Empty {
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Polygon {
+	vec2 points[16];
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool PolygonCheck(vec2 point, Polygon poly, int amt);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float baseUnit = iResolution.y/6.0;
+
+	vec2 bodyPoly4 = vec2(1.3200000524520874*baseUnit, 0.1899999976158142*baseUnit);
+
+	vec2 bodyPoly2 = vec2(1.2100000381469727*baseUnit, 0.550000011920929*baseUnit);
+
+	vec2 bodyPoly0 = vec2(0.9800000190734863*baseUnit, 0.8700000047683716*baseUnit);
+
+	vec2 bodyPoly1 = vec2(0.7400000095367432*baseUnit, 1.0299999713897705*baseUnit);
+
+	vec2 bodyPoly3 = vec2(0.09000000357627869*baseUnit, 1.2100000381469727*baseUnit);
+
+	vec2 bodyPoly8 = vec2(-0.4000000059604645*baseUnit, 1.2999999523162842*baseUnit);
+
+	vec2 bodyPoly14 = vec2(-1.4299999475479126*baseUnit, -0.23000000417232513*baseUnit);
+
+	vec2 bodyPoly13 = vec2(-1.440000057220459*baseUnit, -0.5199999809265137*baseUnit);
+
+	vec2 bodyPoly12 = vec2(-1.2300000190734863*baseUnit, -1.1399999856948853*baseUnit);
+
+	vec2 bodyPoly10 = vec2(-0.33000001311302185*baseUnit, -1.4600000381469727*baseUnit);
+
+	vec2 bodyPoly7 = vec2(0.5199999809265137*baseUnit, -1.2100000381469727*baseUnit);
+
+	vec2 bodyPoly9 = vec2(0.7300000190734863*baseUnit, -1.1100000143051147*baseUnit);
+
+	vec2 bodyPoly15 = vec2(0.9800000190734863*baseUnit, -0.8600000143051147*baseUnit);
+
+	vec2 bodyPoly11 = vec2(1.149999976158142*baseUnit, -0.6299999952316284*baseUnit);
+
+	vec2 bodyPoly6 = vec2(1.2699999809265137*baseUnit, -0.4000000059604645*baseUnit);
+
+	vec2 bodyPoly5 = vec2(1.3300000429153442*baseUnit, -0.1599999964237213*baseUnit);
+
+	vec2 headPoly3 = vec2(-0.9200000166893005*baseUnit, -0.44999998807907104*baseUnit);
+
+	vec2 headPoly0 = vec2(-0.800000011920929*baseUnit, -0.8600000143051147*baseUnit);
+
+	vec2 headPoly14 = vec2(-0.6399999856948853*baseUnit, -1.0800000429153442*baseUnit);
+
+	vec2 headPoly11 = vec2(-0.4699999988079071*baseUnit, -1.2200000286102295*baseUnit);
+
+	vec2 headPoly13 = vec2(0.6100000143051147*baseUnit, -1.190000057220459*baseUnit);
+
+	vec2 headPoly12 = vec2(0.9700000286102295*baseUnit, 0.14000000059604645*baseUnit);
+
+	vec2 headPoly4 = vec2(1.0700000524520874*baseUnit, 0.5600000023841858*baseUnit);
+
+	vec2 headPoly9 = vec2(1.0800000429153442*baseUnit, 0.7900000214576721*baseUnit);
+
+	vec2 headPoly10 = vec2(0.9200000166893005*baseUnit, 0.9700000286102295*baseUnit);
+
+	vec2 headPoly5 = vec2(0.6899999976158142*baseUnit, 1.059999942779541*baseUnit);
+
+	vec2 headPoly6 = vec2(0.23000000417232513*baseUnit, 1.0399999618530273*baseUnit);
+
+	vec2 headPoly7 = vec2(-0.20000000298023224*baseUnit, 0.9100000262260437*baseUnit);
+
+	vec2 headPoly2 = vec2(-0.5299999713897705*baseUnit, 0.6399999856948853*baseUnit);
+
+	vec2 headPoly8 = vec2(-0.800000011920929*baseUnit, 0.25*baseUnit);
+
+	vec2 headPoly1 = vec2(-0.9300000071525574*baseUnit, -0.12999999523162842*baseUnit);
+
+	// Object Declarations
+	Circle bodyExtra = Circle(
+		baseUnit,
+		vec2(-0.9100000262260437*baseUnit+iResolution.x/2.0+0.0, -0.7799999713897705*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.75, 0.75),
+		-0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Polygon bodyPoly = Polygon(
+		vec2[16](
+			vec2(1.3200000524520874*baseUnit, 0.1899999976158142*baseUnit),
+			vec2(1.2100000381469727*baseUnit, 0.550000011920929*baseUnit),
+			vec2(0.9800000190734863*baseUnit, 0.8700000047683716*baseUnit),
+			vec2(0.7400000095367432*baseUnit, 1.0299999713897705*baseUnit),
+			vec2(0.09000000357627869*baseUnit, 1.2100000381469727*baseUnit),
+			vec2(-0.4000000059604645*baseUnit, 1.2999999523162842*baseUnit),
+			vec2(-1.4299999475479126*baseUnit, -0.23000000417232513*baseUnit),
+			vec2(-1.440000057220459*baseUnit, -0.5199999809265137*baseUnit),
+			vec2(-1.2300000190734863*baseUnit, -1.1399999856948853*baseUnit),
+			vec2(-0.33000001311302185*baseUnit, -1.4600000381469727*baseUnit),
+			vec2(0.5199999809265137*baseUnit, -1.2100000381469727*baseUnit),
+			vec2(0.7300000190734863*baseUnit, -1.1100000143051147*baseUnit),
+			vec2(0.9800000190734863*baseUnit, -0.8600000143051147*baseUnit),
+			vec2(1.149999976158142*baseUnit, -0.6299999952316284*baseUnit),
+			vec2(1.2699999809265137*baseUnit, -0.4000000059604645*baseUnit),
+			vec2(1.3300000429153442*baseUnit, -0.1599999964237213*baseUnit)
+		),
+		vec2(0.4399999976158142*baseUnit+iResolution.x/2.0+0.0, -0.3700000047683716*baseUnit+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		-0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle bottom = Circle(
+		baseUnit,
+		vec2(-0.15000000596046448*baseUnit+iResolution.x/2.0+0.0, -1.4500000476837158*baseUnit+iResolution.y/2.0+0.0),
+		vec2(1.159999966621399, 0.5199999809265137),
+		3.109999895095825,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle headExtra = Circle(
+		baseUnit,
+		vec2(-0.10000000149011612*baseUnit+iResolution.x/2.0+0.0, 0.9300000071525574*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.6100000143051147, 0.6100000143051147),
+		-0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Polygon headPoly = Polygon(
+		vec2[16](
+			vec2(-0.9200000166893005*baseUnit, -0.44999998807907104*baseUnit),
+			vec2(-0.800000011920929*baseUnit, -0.8600000143051147*baseUnit),
+			vec2(-0.6399999856948853*baseUnit, -1.0800000429153442*baseUnit),
+			vec2(-0.4699999988079071*baseUnit, -1.2200000286102295*baseUnit),
+			vec2(0.6100000143051147*baseUnit, -1.190000057220459*baseUnit),
+			vec2(0.9700000286102295*baseUnit, 0.14000000059604645*baseUnit),
+			vec2(1.0700000524520874*baseUnit, 0.5600000023841858*baseUnit),
+			vec2(1.0800000429153442*baseUnit, 0.7900000214576721*baseUnit),
+			vec2(0.9200000166893005*baseUnit, 0.9700000286102295*baseUnit),
+			vec2(0.6899999976158142*baseUnit, 1.059999942779541*baseUnit),
+			vec2(0.23000000417232513*baseUnit, 1.0399999618530273*baseUnit),
+			vec2(-0.20000000298023224*baseUnit, 0.9100000262260437*baseUnit),
+			vec2(-0.5299999713897705*baseUnit, 0.6399999856948853*baseUnit),
+			vec2(-0.800000011920929*baseUnit, 0.25*baseUnit),
+			vec2(-0.9300000071525574*baseUnit, -0.12999999523162842*baseUnit),
+			vec2(0.0, 0.0)
+		),
+		vec2(-0.8500000238418579*baseUnit+iResolution.x/2.0+0.0, 1.0700000524520874*baseUnit+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		-0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle tip1 = Circle(
+		baseUnit,
+		vec2(-1.25*baseUnit+iResolution.x/2.0+0.0, -1.4700000286102295*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.15000000596046448, 0.3499999940395355),
+		77.02999877929688,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle tip2 = Circle(
+		baseUnit,
+		vec2(-0.949999988079071*baseUnit+iResolution.x/2.0+0.0, -1.7799999713897705*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.11999999731779099, 0.25),
+		66.2699966430664,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle tip3 = Circle(
+		baseUnit,
+		vec2(-0.4000000059604645*baseUnit+iResolution.x/2.0+0.0, -1.899999976158142*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.14000000059604645, 0.23000000417232513),
+		34.529998779296875,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle tip4 = Circle(
+		baseUnit,
+		vec2(0.12999999523162842*baseUnit+iResolution.x/2.0+0.0, -1.9500000476837158*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.14000000059604645, 0.20999999344348907),
+		23.809999465942383,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle tip5 = Circle(
+		baseUnit,
+		vec2(0.7300000190734863*baseUnit+iResolution.x/2.0+0.0, -1.8200000524520874*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.15000000596046448, 0.20000000298023224),
+		-22.190000534057617,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle z_body_black = Circle(
+		baseUnit,
+		vec2(-1.7300000190734863*baseUnit+iResolution.x/2.0+0.0, -0.7400000095367432*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.7300000190734863, 0.7300000190734863),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_eyeL_black = Circle(
+		baseUnit,
+		vec2(-0.7200000286102295*baseUnit+iResolution.x/2.0+0.0, 0.8799999952316284*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.20000000298023224, 0.3499999940395355),
+		-8.020000457763672,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_eyeR_black = Circle(
+		baseUnit,
+		vec2(-0.2199999988079071*baseUnit+iResolution.x/2.0+0.0, 1.1200000047683716*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.15000000596046448, 0.27000001072883606),
+		-7.989999771118164,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_head_black = Circle(
+		baseUnit,
+		vec2(0.5600000023841858*baseUnit+iResolution.x/2.0+0.0, 1.2899999618530273*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.44999998807907104, 0.44999998807907104),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_mouth_black = Circle(
+		baseUnit,
+		vec2(1.1299999952316284*baseUnit+iResolution.x/2.0+0.0, -0.36000001430511475*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.3199999928474426, 0.46000000834465027),
+		6.800000190734863,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_tip_black1 = Circle(
+		baseUnit,
+		vec2(-1.190000057220459*baseUnit+iResolution.x/2.0+0.0, -1.7000000476837158*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.10000000149011612, 0.10000000149011612),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_tip_black2 = Circle(
+		baseUnit,
+		vec2(-0.6899999976158142*baseUnit+iResolution.x/2.0+0.0, -1.9299999475479126*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.11999999731779099, 0.11999999731779099),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_tip_black3 = Circle(
+		baseUnit,
+		vec2(-0.1599999964237213*baseUnit+iResolution.x/2.0+0.0, -2.009999990463257*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.11999999731779099, 0.11999999731779099),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_tip_black4 = Circle(
+		baseUnit,
+		vec2(0.44999998807907104*baseUnit+iResolution.x/2.0+0.0, -1.9800000190734863*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.17000000178813934, 0.17000000178813934),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle z_tip_black5 = Circle(
+		baseUnit,
+		vec2(1.0399999618530273*baseUnit+iResolution.x/2.0+0.0, -1.7200000286102295*baseUnit+iResolution.y/2.0+0.0),
+		vec2(0.17000000178813934, 0.17000000178813934),
+		-0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Empty ghost = Empty(
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+
+	vec2 ghostSpace = fragCoord;
+	ghostSpace -= ghost.pos;
+	ghostSpace = rotate2D(ghost.rot) * ghostSpace;
+	ghostSpace = scale2D(ghost.scale) * ghostSpace;
+	ghostSpace += ghost.pos;
+	
+
+	vec2 bodyExtraSpace = ghostSpace;
+	bodyExtraSpace -= bodyExtra.pos;
+	bodyExtraSpace = rotate2D(bodyExtra.rot) * bodyExtraSpace;
+	bodyExtraSpace = scale2D(bodyExtra.scale) * bodyExtraSpace;
+	bodyExtraSpace += bodyExtra.pos;
+	if (false ^^ CircleCheck(bodyExtraSpace, bodyExtra)) {
+		fragColor = bodyExtra.color;
+	}
+
+	vec2 bodyPolySpace = ghostSpace;
+	bodyPolySpace -= bodyPoly.pos;
+	bodyPolySpace = rotate2D(bodyPoly.rot) * bodyPolySpace;
+	bodyPolySpace = scale2D(bodyPoly.scale) * bodyPolySpace;
+	bodyPolySpace += bodyPoly.pos;
+	if (false ^^ PolygonCheck(bodyPolySpace, bodyPoly, 16)) {
+		fragColor = bodyPoly.color;
+	}
+
+	vec2 bottomSpace = ghostSpace;
+	bottomSpace -= bottom.pos;
+	bottomSpace = rotate2D(bottom.rot) * bottomSpace;
+	bottomSpace = scale2D(bottom.scale) * bottomSpace;
+	bottomSpace += bottom.pos;
+	if (false ^^ CircleCheck(bottomSpace, bottom)) {
+		fragColor = bottom.color;
+	}
+
+	vec2 headExtraSpace = ghostSpace;
+	headExtraSpace -= headExtra.pos;
+	headExtraSpace = rotate2D(headExtra.rot) * headExtraSpace;
+	headExtraSpace = scale2D(headExtra.scale) * headExtraSpace;
+	headExtraSpace += headExtra.pos;
+	if (false ^^ CircleCheck(headExtraSpace, headExtra)) {
+		fragColor = headExtra.color;
+	}
+
+	vec2 headPolySpace = ghostSpace;
+	headPolySpace -= headPoly.pos;
+	headPolySpace = rotate2D(headPoly.rot) * headPolySpace;
+	headPolySpace = scale2D(headPoly.scale) * headPolySpace;
+	headPolySpace += headPoly.pos;
+	if (false ^^ PolygonCheck(headPolySpace, headPoly, 15)) {
+		fragColor = headPoly.color;
+	}
+
+	vec2 tip1Space = ghostSpace;
+	tip1Space -= tip1.pos;
+	tip1Space = rotate2D(tip1.rot) * tip1Space;
+	tip1Space = scale2D(tip1.scale) * tip1Space;
+	tip1Space += tip1.pos;
+	if (false ^^ CircleCheck(tip1Space, tip1)) {
+		fragColor = tip1.color;
+	}
+
+	vec2 tip2Space = ghostSpace;
+	tip2Space -= tip2.pos;
+	tip2Space = rotate2D(tip2.rot) * tip2Space;
+	tip2Space = scale2D(tip2.scale) * tip2Space;
+	tip2Space += tip2.pos;
+	if (false ^^ CircleCheck(tip2Space, tip2)) {
+		fragColor = tip2.color;
+	}
+
+	vec2 tip3Space = ghostSpace;
+	tip3Space -= tip3.pos;
+	tip3Space = rotate2D(tip3.rot) * tip3Space;
+	tip3Space = scale2D(tip3.scale) * tip3Space;
+	tip3Space += tip3.pos;
+	if (false ^^ CircleCheck(tip3Space, tip3)) {
+		fragColor = tip3.color;
+	}
+
+	vec2 tip4Space = ghostSpace;
+	tip4Space -= tip4.pos;
+	tip4Space = rotate2D(tip4.rot) * tip4Space;
+	tip4Space = scale2D(tip4.scale) * tip4Space;
+	tip4Space += tip4.pos;
+	if (false ^^ CircleCheck(tip4Space, tip4)) {
+		fragColor = tip4.color;
+	}
+
+	vec2 tip5Space = ghostSpace;
+	tip5Space -= tip5.pos;
+	tip5Space = rotate2D(tip5.rot) * tip5Space;
+	tip5Space = scale2D(tip5.scale) * tip5Space;
+	tip5Space += tip5.pos;
+	if (false ^^ CircleCheck(tip5Space, tip5)) {
+		fragColor = tip5.color;
+	}
+
+	vec2 z_body_blackSpace = ghostSpace;
+	z_body_blackSpace -= z_body_black.pos;
+	z_body_blackSpace = rotate2D(z_body_black.rot) * z_body_blackSpace;
+	z_body_blackSpace = scale2D(z_body_black.scale) * z_body_blackSpace;
+	z_body_blackSpace += z_body_black.pos;
+	if (false ^^ CircleCheck(z_body_blackSpace, z_body_black)) {
+		fragColor = z_body_black.color;
+	}
+
+	vec2 z_eyeL_blackSpace = ghostSpace;
+	z_eyeL_blackSpace -= z_eyeL_black.pos;
+	z_eyeL_blackSpace = rotate2D(z_eyeL_black.rot) * z_eyeL_blackSpace;
+	z_eyeL_blackSpace = scale2D(z_eyeL_black.scale) * z_eyeL_blackSpace;
+	z_eyeL_blackSpace += z_eyeL_black.pos;
+	if (false ^^ CircleCheck(z_eyeL_blackSpace, z_eyeL_black)) {
+		fragColor = z_eyeL_black.color;
+	}
+
+	vec2 z_eyeR_blackSpace = ghostSpace;
+	z_eyeR_blackSpace -= z_eyeR_black.pos;
+	z_eyeR_blackSpace = rotate2D(z_eyeR_black.rot) * z_eyeR_blackSpace;
+	z_eyeR_blackSpace = scale2D(z_eyeR_black.scale) * z_eyeR_blackSpace;
+	z_eyeR_blackSpace += z_eyeR_black.pos;
+	if (false ^^ CircleCheck(z_eyeR_blackSpace, z_eyeR_black)) {
+		fragColor = z_eyeR_black.color;
+	}
+
+	vec2 z_head_blackSpace = ghostSpace;
+	z_head_blackSpace -= z_head_black.pos;
+	z_head_blackSpace = rotate2D(z_head_black.rot) * z_head_blackSpace;
+	z_head_blackSpace = scale2D(z_head_black.scale) * z_head_blackSpace;
+	z_head_blackSpace += z_head_black.pos;
+	if (false ^^ CircleCheck(z_head_blackSpace, z_head_black)) {
+		fragColor = z_head_black.color;
+	}
+
+	vec2 z_mouth_blackSpace = ghostSpace;
+	z_mouth_blackSpace -= z_mouth_black.pos;
+	z_mouth_blackSpace = rotate2D(z_mouth_black.rot) * z_mouth_blackSpace;
+	z_mouth_blackSpace = scale2D(z_mouth_black.scale) * z_mouth_blackSpace;
+	z_mouth_blackSpace += z_mouth_black.pos;
+	if (false ^^ CircleCheck(z_mouth_blackSpace, z_mouth_black)) {
+		fragColor = z_mouth_black.color;
+	}
+
+	vec2 z_tip_black1Space = ghostSpace;
+	z_tip_black1Space -= z_tip_black1.pos;
+	z_tip_black1Space = rotate2D(z_tip_black1.rot) * z_tip_black1Space;
+	z_tip_black1Space = scale2D(z_tip_black1.scale) * z_tip_black1Space;
+	z_tip_black1Space += z_tip_black1.pos;
+	if (false ^^ CircleCheck(z_tip_black1Space, z_tip_black1)) {
+		fragColor = z_tip_black1.color;
+	}
+
+	vec2 z_tip_black2Space = ghostSpace;
+	z_tip_black2Space -= z_tip_black2.pos;
+	z_tip_black2Space = rotate2D(z_tip_black2.rot) * z_tip_black2Space;
+	z_tip_black2Space = scale2D(z_tip_black2.scale) * z_tip_black2Space;
+	z_tip_black2Space += z_tip_black2.pos;
+	if (false ^^ CircleCheck(z_tip_black2Space, z_tip_black2)) {
+		fragColor = z_tip_black2.color;
+	}
+
+	vec2 z_tip_black3Space = ghostSpace;
+	z_tip_black3Space -= z_tip_black3.pos;
+	z_tip_black3Space = rotate2D(z_tip_black3.rot) * z_tip_black3Space;
+	z_tip_black3Space = scale2D(z_tip_black3.scale) * z_tip_black3Space;
+	z_tip_black3Space += z_tip_black3.pos;
+	if (false ^^ CircleCheck(z_tip_black3Space, z_tip_black3)) {
+		fragColor = z_tip_black3.color;
+	}
+
+	vec2 z_tip_black4Space = ghostSpace;
+	z_tip_black4Space -= z_tip_black4.pos;
+	z_tip_black4Space = rotate2D(z_tip_black4.rot) * z_tip_black4Space;
+	z_tip_black4Space = scale2D(z_tip_black4.scale) * z_tip_black4Space;
+	z_tip_black4Space += z_tip_black4.pos;
+	if (false ^^ CircleCheck(z_tip_black4Space, z_tip_black4)) {
+		fragColor = z_tip_black4.color;
+	}
+
+	vec2 z_tip_black5Space = ghostSpace;
+	z_tip_black5Space -= z_tip_black5.pos;
+	z_tip_black5Space = rotate2D(z_tip_black5.rot) * z_tip_black5Space;
+	z_tip_black5Space = scale2D(z_tip_black5.scale) * z_tip_black5Space;
+	z_tip_black5Space += z_tip_black5.pos;
+	if (false ^^ CircleCheck(z_tip_black5Space, z_tip_black5)) {
+		fragColor = z_tip_black5.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool PolygonCheck(vec2 point, Polygon poly, int amt){
+	    float angle = 0.0;
+    for (int i = 0; i < amt; i++) {
+        vec2 a = vec2(poly.points[i]-point+poly.pos);
+        
+        vec2 b;
+        
+        if (i < amt-1)
+        	b = vec2(poly.points[i+1]-point+poly.pos);
+        else
+            b = vec2(poly.points[0]-point+poly.pos);
+        
+        angle += abs( acos( dot(a,b) / ( length(a) * length(b) ) ) );
+    }
+    angle *= 180.0 / PI;
+    return angle < 361.0 && angle > 359.0;
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

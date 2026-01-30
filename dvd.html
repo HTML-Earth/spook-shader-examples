@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>DVD.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// DVD.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Empty {
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Triangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool RectangleCheck(vec2 point, Rectangle rec);
+bool TriangleCheck(vec2 point, Triangle tri);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+vec2 calcBounce(float t, float width, float height, float scrWidth, float scrHeight);
+
+vec4 calcColor(float t, float width, float height, float scrWidth, float scrHeight);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float sqrTime = iTime*iResolution.y/5.0;
+
+	float sqrSize = (iResolution.y/4.0);
+
+	vec2 logoPos = calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y);
+
+	vec4 logoColor = calcColor(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y);
+
+	// Object Declarations
+	Circle hole2 = Circle(
+		sqrSize*0.20000000298023224,
+		vec2(vec2(0.0, 0.0)+vec2(sqrSize*0.20000000298023224, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle d2 = Circle(
+		sqrSize*0.30000001192092896,
+		vec2(vec2(sqrSize*0.20000000298023224, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 0.6000000238418579),
+		0.0,
+		vec4(logoColor)
+	);
+
+	Rectangle left2 = Rectangle(
+		vec2(sqrSize*0.5, sqrSize*0.6000000238418579),
+		vec2(vec2(sqrSize*-0.05000000074505806, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Rectangle line2 = Rectangle(
+		vec2(sqrSize*0.07999999821186066, sqrSize*0.36000001430511475),
+		vec2(vec2(sqrSize*0.1599999964237213, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(logoColor)
+	);
+
+	Triangle vIn = Triangle(
+		vec2(sqrSize*0.5, sqrSize*0.4000000059604645),
+		vec2(vec2(0.0, sqrSize*-0.10000000149011612)+vec2(sqrSize*-0.05000000074505806, sqrSize*0.07999999821186066)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Triangle v = Triangle(
+		vec2(sqrSize*0.5, sqrSize*0.4000000059604645),
+		vec2(vec2(sqrSize*-0.05000000074505806, sqrSize*0.07999999821186066)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		180.0,
+		vec4(logoColor)
+	);
+
+	Circle hole1 = Circle(
+		sqrSize*0.20000000298023224,
+		vec2(vec2(0.0, 0.0)+vec2(sqrSize*-0.44999998807907104, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle d1 = Circle(
+		sqrSize*0.30000001192092896,
+		vec2(vec2(sqrSize*-0.44999998807907104, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 0.6000000238418579),
+		0.0,
+		vec4(logoColor)
+	);
+
+	Rectangle left1 = Rectangle(
+		vec2(sqrSize*0.5, sqrSize*0.6000000238418579),
+		vec2(vec2(sqrSize*-0.75, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Rectangle line1 = Rectangle(
+		vec2(sqrSize*0.07999999821186066, sqrSize*0.36000001430511475),
+		vec2(vec2(sqrSize*-0.46000000834465027, sqrSize*0.10000000149011612)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(logoColor)
+	);
+
+	Circle discHole = Circle(
+		sqrSize*0.20000000298023224,
+		vec2(vec2(0.0, 0.0)+vec2(0.0, -sqrSize*0.20000000298023224)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle disc = Circle(
+		sqrSize,
+		vec2(vec2(0.0, -sqrSize*0.20000000298023224)+calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(0.5, 0.10000000149011612),
+		0.0,
+		vec4(logoColor)
+	);
+
+	Empty logo = Empty(
+		vec2(calcBounce(sqrTime, sqrSize, sqrSize*0.6000000238418579, iResolution.x, iResolution.y)+vec2(0.0, 0.0)),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+
+	vec2 logoSpace = fragCoord;
+	logoSpace -= logo.pos;
+	logoSpace = rotate2D(logo.rot) * logoSpace;
+	logoSpace = scale2D(logo.scale) * logoSpace;
+	logoSpace += logo.pos;
+	
+
+	vec2 d2Space = logoSpace;
+	d2Space -= d2.pos;
+	d2Space = rotate2D(d2.rot) * d2Space;
+	d2Space = scale2D(d2.scale) * d2Space;
+	d2Space += d2.pos;
+	if (false ^^ CircleCheck(d2Space, d2)) {
+		fragColor = mix(fragColor, d2.color, d2.color.a);
+	}
+
+	vec2 hole2Space = d2Space;
+	hole2Space -= hole2.pos;
+	hole2Space = rotate2D(hole2.rot) * hole2Space;
+	hole2Space = scale2D(hole2.scale) * hole2Space;
+	hole2Space += hole2.pos;
+	if (false ^^ CircleCheck(hole2Space, hole2)) {
+		fragColor = hole2.color;
+	}
+
+	vec2 left2Space = logoSpace;
+	left2Space -= left2.pos;
+	left2Space = rotate2D(left2.rot) * left2Space;
+	left2Space = scale2D(left2.scale) * left2Space;
+	left2Space += left2.pos;
+	if (false ^^ RectangleCheck(left2Space, left2)) {
+		fragColor = left2.color;
+	}
+
+	vec2 line2Space = logoSpace;
+	line2Space -= line2.pos;
+	line2Space = rotate2D(line2.rot) * line2Space;
+	line2Space = scale2D(line2.scale) * line2Space;
+	line2Space += line2.pos;
+	if (false ^^ RectangleCheck(line2Space, line2)) {
+		fragColor = mix(fragColor, line2.color, line2.color.a);
+	}
+
+	vec2 vSpace = logoSpace;
+	vSpace -= v.pos;
+	vSpace = rotate2D(v.rot) * vSpace;
+	vSpace = scale2D(v.scale) * vSpace;
+	vSpace += v.pos;
+	if (false ^^ TriangleCheck(vSpace, v)) {
+		fragColor = mix(fragColor, v.color, v.color.a);
+	}
+
+	vec2 vInSpace = vSpace;
+	vInSpace -= vIn.pos;
+	vInSpace = rotate2D(vIn.rot) * vInSpace;
+	vInSpace = scale2D(vIn.scale) * vInSpace;
+	vInSpace += vIn.pos;
+	if (false ^^ TriangleCheck(vInSpace, vIn)) {
+		fragColor = vIn.color;
+	}
+
+	vec2 d1Space = logoSpace;
+	d1Space -= d1.pos;
+	d1Space = rotate2D(d1.rot) * d1Space;
+	d1Space = scale2D(d1.scale) * d1Space;
+	d1Space += d1.pos;
+	if (false ^^ CircleCheck(d1Space, d1)) {
+		fragColor = mix(fragColor, d1.color, d1.color.a);
+	}
+
+	vec2 hole1Space = d1Space;
+	hole1Space -= hole1.pos;
+	hole1Space = rotate2D(hole1.rot) * hole1Space;
+	hole1Space = scale2D(hole1.scale) * hole1Space;
+	hole1Space += hole1.pos;
+	if (false ^^ CircleCheck(hole1Space, hole1)) {
+		fragColor = hole1.color;
+	}
+
+	vec2 left1Space = logoSpace;
+	left1Space -= left1.pos;
+	left1Space = rotate2D(left1.rot) * left1Space;
+	left1Space = scale2D(left1.scale) * left1Space;
+	left1Space += left1.pos;
+	if (false ^^ RectangleCheck(left1Space, left1)) {
+		fragColor = left1.color;
+	}
+
+	vec2 line1Space = logoSpace;
+	line1Space -= line1.pos;
+	line1Space = rotate2D(line1.rot) * line1Space;
+	line1Space = scale2D(line1.scale) * line1Space;
+	line1Space += line1.pos;
+	if (false ^^ RectangleCheck(line1Space, line1)) {
+		fragColor = mix(fragColor, line1.color, line1.color.a);
+	}
+
+	vec2 discSpace = logoSpace;
+	discSpace -= disc.pos;
+	discSpace = rotate2D(disc.rot) * discSpace;
+	discSpace = scale2D(disc.scale) * discSpace;
+	discSpace += disc.pos;
+	if (false ^^ CircleCheck(discSpace, disc)) {
+		fragColor = mix(fragColor, disc.color, disc.color.a);
+	}
+
+	vec2 discHoleSpace = discSpace;
+	discHoleSpace -= discHole.pos;
+	discHoleSpace = rotate2D(discHole.rot) * discHoleSpace;
+	discHoleSpace = scale2D(discHole.scale) * discHoleSpace;
+	discHoleSpace += discHole.pos;
+	if (false ^^ CircleCheck(discHoleSpace, discHole)) {
+		fragColor = discHole.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+bool TriangleCheck(vec2 point, Triangle tri){
+	if (point.y < tri.pos.y - (tri.size.y / 2.) || point.y > tri.pos.y + (tri.size.y / 2.))
+		return false;
+
+	vec2 pTop = vec2(tri.pos.x, tri.pos.y + (tri.size.y / 2.));
+	
+	if (point.x < tri.pos.x) {
+		vec2 pLeft = vec2(tri.pos.x - (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pTop.y - pLeft.y) / (pTop.x - pLeft.x);
+		return (point.y < angle * (point.x-pLeft.x) + pLeft.y);
+	}
+	else {
+		vec2 pRight = vec2(tri.pos.x + (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pRight.y - pTop.y) / (pRight.x - pTop.x);
+		return (point.y < angle * (point.x-pTop.x) + pTop.y);
+	}
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+vec2 calcBounce(float t, float width, float height, float scrWidth, float scrHeight){
+	float xPos = 0.0;
+	float yPos = 0.0;
+	float w = scrWidth-width;
+	float h = scrHeight-height;
+	if (mod(t, w*2.0) < w)
+		xPos = mod(t, w);
+else
+		xPos = w-(mod(t, w));
+
+	if (mod(t, h*2.0) < h)
+		yPos = mod(t, h);
+else
+		yPos = h-(mod(t, h));
+
+	vec2 pos = vec2(xPos+width*0.5, yPos+height*0.5);
+	return pos;
+}
+
+vec4 calcColor(float t, float width, float height, float scrWidth, float scrHeight){
+	float w = scrWidth-width;
+	float h = scrHeight-height;
+	float r = (mod(t, w*2.0) < w) ? 0.0 : 1.0;
+	float b = (mod(t, h*2.0) < h) ? 0.0 : 1.0;
+	vec4 color = vec4(r, 1.0, b, 1.0);
+	return color;
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

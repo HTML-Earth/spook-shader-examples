@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>Spooderman.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// Spooderman.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Polygon {
+	vec2 points[16];
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool PolygonCheck(vec2 point, Polygon poly, int amt);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float xPos = iResolution.x/2.0;
+
+	float yPos = iResolution.y/2.0;
+
+	vec2 lEyeP1 = vec2(0.0, 0.0);
+
+	vec2 lEyeP2 = vec2(15.0, -150.0);
+
+	vec2 lEyeP3 = vec2(60.0, -225.0);
+
+	vec2 lEyeP4 = vec2(150.0, -240.0);
+
+	vec2 lEyeP5 = vec2(225.0, -225.0);
+
+	vec2 lEyeP6 = vec2(255.0, -150.0);
+
+	vec2 blEyeP1 = vec2(-5.0, 10.0);
+
+	vec2 blEyeP2 = vec2(10.0, -155.0);
+
+	vec2 blEyeP3 = vec2(55.0, -230.0);
+
+	vec2 blEyeP4 = vec2(155.0, -245.0);
+
+	vec2 blEyeP5 = vec2(230.0, -230.0);
+
+	vec2 blEyeP6 = vec2(265.0, -150.0);
+
+	vec2 rEyeP1 = vec2(0.0, 0.0);
+
+	vec2 rEyeP2 = vec2(30.0, -75.0);
+
+	vec2 rEyeP3 = vec2(105.0, -90.0);
+
+	vec2 rEyeP4 = vec2(195.0, -75.0);
+
+	vec2 rEyeP5 = vec2(240.0, 0.0);
+
+	vec2 rEyeP6 = vec2(255.0, 150.0);
+
+	vec2 brEyeP1 = vec2(-5.0, 3.0);
+
+	vec2 brEyeP2 = vec2(25.0, -80.0);
+
+	vec2 brEyeP3 = vec2(105.0, -95.0);
+
+	vec2 brEyeP4 = vec2(200.0, -80.0);
+
+	vec2 brEyeP5 = vec2(245.0, 0.0);
+
+	vec2 brEyeP6 = vec2(260.0, 160.0);
+
+	// Object Declarations
+	Circle head = Circle(
+		425.0,
+		vec2(xPos+0.0, yPos+0.0),
+		vec2(0.800000011920929, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle mask = Circle(
+		420.0,
+		vec2(xPos+0.0, yPos+0.0),
+		vec2(0.800000011920929, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 0.0, 1.0)
+	);
+
+	Polygon bleftEye = Polygon(
+		vec2[16](
+			vec2(-5.0, 10.0),
+			vec2(10.0, -155.0),
+			vec2(55.0, -230.0),
+			vec2(155.0, -245.0),
+			vec2(230.0, -230.0),
+			vec2(265.0, -150.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(xPos-275.0+0.0, yPos+200.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Polygon leftEye = Polygon(
+		vec2[16](
+			vec2(0.0, 0.0),
+			vec2(15.0, -150.0),
+			vec2(60.0, -225.0),
+			vec2(150.0, -240.0),
+			vec2(225.0, -225.0),
+			vec2(255.0, -150.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(xPos-275.0+0.0, yPos+200.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Polygon brightEye = Polygon(
+		vec2[16](
+			vec2(-5.0, 3.0),
+			vec2(25.0, -80.0),
+			vec2(105.0, -95.0),
+			vec2(200.0, -80.0),
+			vec2(245.0, 0.0),
+			vec2(260.0, 160.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(xPos+25.0+0.0, yPos+50.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Polygon rightEye = Polygon(
+		vec2[16](
+			vec2(0.0, 0.0),
+			vec2(30.0, -75.0),
+			vec2(105.0, -90.0),
+			vec2(195.0, -75.0),
+			vec2(240.0, 0.0),
+			vec2(255.0, 150.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0),
+			vec2(0.0, 0.0)
+		),
+		vec2(xPos+25.0+0.0, yPos+50.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+
+
+	vec2 headSpace = fragCoord;
+	headSpace -= head.pos;
+	headSpace = rotate2D(head.rot) * headSpace;
+	headSpace = scale2D(head.scale) * headSpace;
+	headSpace += head.pos;
+	if (false ^^ CircleCheck(headSpace, head)) {
+		fragColor = head.color;
+	}
+
+	vec2 maskSpace = fragCoord;
+	maskSpace -= mask.pos;
+	maskSpace = rotate2D(mask.rot) * maskSpace;
+	maskSpace = scale2D(mask.scale) * maskSpace;
+	maskSpace += mask.pos;
+	if (false ^^ CircleCheck(maskSpace, mask)) {
+		fragColor = mask.color;
+	}
+
+	vec2 bleftEyeSpace = fragCoord;
+	bleftEyeSpace -= bleftEye.pos;
+	bleftEyeSpace = rotate2D(bleftEye.rot) * bleftEyeSpace;
+	bleftEyeSpace = scale2D(bleftEye.scale) * bleftEyeSpace;
+	bleftEyeSpace += bleftEye.pos;
+	if (false ^^ PolygonCheck(bleftEyeSpace, bleftEye, 6)) {
+		fragColor = bleftEye.color;
+	}
+
+	vec2 leftEyeSpace = fragCoord;
+	leftEyeSpace -= leftEye.pos;
+	leftEyeSpace = rotate2D(leftEye.rot) * leftEyeSpace;
+	leftEyeSpace = scale2D(leftEye.scale) * leftEyeSpace;
+	leftEyeSpace += leftEye.pos;
+	if (false ^^ PolygonCheck(leftEyeSpace, leftEye, 6)) {
+		fragColor = leftEye.color;
+	}
+
+	vec2 brightEyeSpace = fragCoord;
+	brightEyeSpace -= brightEye.pos;
+	brightEyeSpace = rotate2D(brightEye.rot) * brightEyeSpace;
+	brightEyeSpace = scale2D(brightEye.scale) * brightEyeSpace;
+	brightEyeSpace += brightEye.pos;
+	if (false ^^ PolygonCheck(brightEyeSpace, brightEye, 6)) {
+		fragColor = brightEye.color;
+	}
+
+	vec2 rightEyeSpace = fragCoord;
+	rightEyeSpace -= rightEye.pos;
+	rightEyeSpace = rotate2D(rightEye.rot) * rightEyeSpace;
+	rightEyeSpace = scale2D(rightEye.scale) * rightEyeSpace;
+	rightEyeSpace += rightEye.pos;
+	if (false ^^ PolygonCheck(rightEyeSpace, rightEye, 6)) {
+		fragColor = rightEye.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool PolygonCheck(vec2 point, Polygon poly, int amt){
+	    float angle = 0.0;
+    for (int i = 0; i < amt; i++) {
+        vec2 a = vec2(poly.points[i]-point+poly.pos);
+        
+        vec2 b;
+        
+        if (i < amt-1)
+        	b = vec2(poly.points[i+1]-point+poly.pos);
+        else
+            b = vec2(poly.points[0]-point+poly.pos);
+        
+        angle += abs( acos( dot(a,b) / ( length(a) * length(b) ) ) );
+    }
+    angle *= 180.0 / PI;
+    return angle < 361.0 && angle > 359.0;
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

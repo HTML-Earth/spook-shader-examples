@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>MathFunctions3.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// MathFunctions3.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+bool RectangleCheck(vec2 point, Rectangle rec);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	vec4 bgColor = vec4(0.30000001192092896, 0.30000001192092896, 0.30000001192092896, 1.0);
+
+	float hLineHeight = iResolution.y/2.0;
+
+	float repeatingTime = mod(iTime, 1.0);
+
+	float dotSize = 15.0;
+
+	float dotX = repeatingTime*iResolution.x*0.25;
+
+	float dotX2 = repeatingTime*iResolution.x*0.25+iResolution.x*0.25;
+
+	float unitHeight = iResolution.y/4.0;
+
+	float dotX3 = repeatingTime*iResolution.x*0.25+iResolution.x*0.5;
+
+	float signValue = sign(sin(repeatingTime*6.0));
+
+	vec4 signColor = vec4(signValue, signValue, signValue, 1.0);
+
+	float dotX4 = repeatingTime*iResolution.x*0.25+iResolution.x*0.75;
+
+	// Object Declarations
+	Rectangle hLine = Rectangle(
+		vec2(iResolution.x, 5.0),
+		vec2(iResolution.x/2.0+0.0, hLineHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.5, 1.0)
+	);
+
+	Rectangle vLine1 = Rectangle(
+		vec2(10.0, iResolution.y),
+		vec2(0.0+0.0, hLineHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.5, 1.0)
+	);
+
+	Rectangle vLine2 = Rectangle(
+		vec2(5.0, iResolution.y),
+		vec2(iResolution.x/4.0+0.0, hLineHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.5, 1.0)
+	);
+
+	Rectangle vLine3 = Rectangle(
+		vec2(5.0, iResolution.y),
+		vec2(iResolution.x-iResolution.x/2.0+0.0, hLineHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.5, 1.0)
+	);
+
+	Rectangle vLine4 = Rectangle(
+		vec2(5.0, iResolution.y),
+		vec2(iResolution.x-iResolution.x/4.0+0.0, hLineHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 0.5, 0.5, 1.0)
+	);
+
+	Circle roundDot = Circle(
+		dotSize,
+		vec2(dotX+0.0, hLineHeight+round(repeatingTime*5.0)*30.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.5, 0.5, 1.0)
+	);
+
+	Circle roundEvenDot = Circle(
+		dotSize/2.0,
+		vec2(dotX+0.0, hLineHeight+roundEven(repeatingTime*5.0)*30.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle fractDot = Circle(
+		dotSize/2.0,
+		vec2(dotX+0.0, hLineHeight-fract(repeatingTime*5.0)*30.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.5, 1.0, 0.83, 1.0)
+	);
+
+	Circle clampDot = Circle(
+		dotSize,
+		vec2(dotX2+0.0, hLineHeight+clamp(sin(repeatingTime*6.0), (-0.25), 0.5)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.59, 0.29, 0.0, 1.0)
+	);
+
+	Circle truncDot = Circle(
+		dotSize/2.0,
+		vec2(dotX2+0.0, hLineHeight+trunc(sin(repeatingTime*6.0)*2.0)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.5, 0.0, 1.0)
+	);
+
+	Circle ceilDot = Circle(
+		dotSize/2.0,
+		vec2(dotX3+0.0, hLineHeight+ceil(sin(repeatingTime*6.0)*2.0)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Circle floorDot = Circle(
+		dotSize/2.0,
+		vec2(dotX3+0.0, hLineHeight+floor(sin(repeatingTime*6.0)*2.0)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle minDot = Circle(
+		dotSize,
+		vec2(dotX3+0.0, hLineHeight+min(sin(repeatingTime*6.0)*2.0, 0.5)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	Circle maxDot = Circle(
+		dotSize,
+		vec2(dotX3+0.0, hLineHeight+max(sin(repeatingTime*6.0)*2.0, -0.5)*unitHeight+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 1.0, 1.0, 1.0)
+	);
+
+	Rectangle signRect = Rectangle(
+		vec2(iResolution.x*0.23999999463558197, 10.0),
+		vec2(iResolution.x*0.625+0.0, hLineHeight+signValue*iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(signColor)
+	);
+
+	Circle mixDot = Circle(
+		dotSize,
+		vec2(dotX4+0.0, hLineHeight+mix(60.0, -5.0, repeatingTime)+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(1.0, 0.0, 1.0, 1.0)
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(bgColor);
+
+
+	vec2 hLineSpace = fragCoord;
+	hLineSpace -= hLine.pos;
+	hLineSpace = rotate2D(hLine.rot) * hLineSpace;
+	hLineSpace = scale2D(hLine.scale) * hLineSpace;
+	hLineSpace += hLine.pos;
+	if (false ^^ RectangleCheck(hLineSpace, hLine)) {
+		fragColor = hLine.color;
+	}
+
+	vec2 vLine1Space = fragCoord;
+	vLine1Space -= vLine1.pos;
+	vLine1Space = rotate2D(vLine1.rot) * vLine1Space;
+	vLine1Space = scale2D(vLine1.scale) * vLine1Space;
+	vLine1Space += vLine1.pos;
+	if (false ^^ RectangleCheck(vLine1Space, vLine1)) {
+		fragColor = vLine1.color;
+	}
+
+	vec2 vLine2Space = fragCoord;
+	vLine2Space -= vLine2.pos;
+	vLine2Space = rotate2D(vLine2.rot) * vLine2Space;
+	vLine2Space = scale2D(vLine2.scale) * vLine2Space;
+	vLine2Space += vLine2.pos;
+	if (false ^^ RectangleCheck(vLine2Space, vLine2)) {
+		fragColor = vLine2.color;
+	}
+
+	vec2 vLine3Space = fragCoord;
+	vLine3Space -= vLine3.pos;
+	vLine3Space = rotate2D(vLine3.rot) * vLine3Space;
+	vLine3Space = scale2D(vLine3.scale) * vLine3Space;
+	vLine3Space += vLine3.pos;
+	if (false ^^ RectangleCheck(vLine3Space, vLine3)) {
+		fragColor = vLine3.color;
+	}
+
+	vec2 vLine4Space = fragCoord;
+	vLine4Space -= vLine4.pos;
+	vLine4Space = rotate2D(vLine4.rot) * vLine4Space;
+	vLine4Space = scale2D(vLine4.scale) * vLine4Space;
+	vLine4Space += vLine4.pos;
+	if (false ^^ RectangleCheck(vLine4Space, vLine4)) {
+		fragColor = vLine4.color;
+	}
+
+	vec2 roundDotSpace = fragCoord;
+	roundDotSpace -= roundDot.pos;
+	roundDotSpace = rotate2D(roundDot.rot) * roundDotSpace;
+	roundDotSpace = scale2D(roundDot.scale) * roundDotSpace;
+	roundDotSpace += roundDot.pos;
+	if (false ^^ CircleCheck(roundDotSpace, roundDot)) {
+		fragColor = roundDot.color;
+	}
+
+	vec2 roundEvenDotSpace = fragCoord;
+	roundEvenDotSpace -= roundEvenDot.pos;
+	roundEvenDotSpace = rotate2D(roundEvenDot.rot) * roundEvenDotSpace;
+	roundEvenDotSpace = scale2D(roundEvenDot.scale) * roundEvenDotSpace;
+	roundEvenDotSpace += roundEvenDot.pos;
+	if (false ^^ CircleCheck(roundEvenDotSpace, roundEvenDot)) {
+		fragColor = roundEvenDot.color;
+	}
+
+	vec2 fractDotSpace = fragCoord;
+	fractDotSpace -= fractDot.pos;
+	fractDotSpace = rotate2D(fractDot.rot) * fractDotSpace;
+	fractDotSpace = scale2D(fractDot.scale) * fractDotSpace;
+	fractDotSpace += fractDot.pos;
+	if (false ^^ CircleCheck(fractDotSpace, fractDot)) {
+		fragColor = fractDot.color;
+	}
+
+	vec2 clampDotSpace = fragCoord;
+	clampDotSpace -= clampDot.pos;
+	clampDotSpace = rotate2D(clampDot.rot) * clampDotSpace;
+	clampDotSpace = scale2D(clampDot.scale) * clampDotSpace;
+	clampDotSpace += clampDot.pos;
+	if (false ^^ CircleCheck(clampDotSpace, clampDot)) {
+		fragColor = clampDot.color;
+	}
+
+	vec2 truncDotSpace = fragCoord;
+	truncDotSpace -= truncDot.pos;
+	truncDotSpace = rotate2D(truncDot.rot) * truncDotSpace;
+	truncDotSpace = scale2D(truncDot.scale) * truncDotSpace;
+	truncDotSpace += truncDot.pos;
+	if (false ^^ CircleCheck(truncDotSpace, truncDot)) {
+		fragColor = truncDot.color;
+	}
+
+	vec2 ceilDotSpace = fragCoord;
+	ceilDotSpace -= ceilDot.pos;
+	ceilDotSpace = rotate2D(ceilDot.rot) * ceilDotSpace;
+	ceilDotSpace = scale2D(ceilDot.scale) * ceilDotSpace;
+	ceilDotSpace += ceilDot.pos;
+	if (false ^^ CircleCheck(ceilDotSpace, ceilDot)) {
+		fragColor = ceilDot.color;
+	}
+
+	vec2 floorDotSpace = fragCoord;
+	floorDotSpace -= floorDot.pos;
+	floorDotSpace = rotate2D(floorDot.rot) * floorDotSpace;
+	floorDotSpace = scale2D(floorDot.scale) * floorDotSpace;
+	floorDotSpace += floorDot.pos;
+	if (false ^^ CircleCheck(floorDotSpace, floorDot)) {
+		fragColor = floorDot.color;
+	}
+
+	vec2 minDotSpace = fragCoord;
+	minDotSpace -= minDot.pos;
+	minDotSpace = rotate2D(minDot.rot) * minDotSpace;
+	minDotSpace = scale2D(minDot.scale) * minDotSpace;
+	minDotSpace += minDot.pos;
+	if (false ^^ CircleCheck(minDotSpace, minDot)) {
+		fragColor = minDot.color;
+	}
+
+	vec2 maxDotSpace = fragCoord;
+	maxDotSpace -= maxDot.pos;
+	maxDotSpace = rotate2D(maxDot.rot) * maxDotSpace;
+	maxDotSpace = scale2D(maxDot.scale) * maxDotSpace;
+	maxDotSpace += maxDot.pos;
+	if (false ^^ CircleCheck(maxDotSpace, maxDot)) {
+		fragColor = maxDot.color;
+	}
+
+	vec2 signRectSpace = fragCoord;
+	signRectSpace -= signRect.pos;
+	signRectSpace = rotate2D(signRect.rot) * signRectSpace;
+	signRectSpace = scale2D(signRect.scale) * signRectSpace;
+	signRectSpace += signRect.pos;
+	if (false ^^ RectangleCheck(signRectSpace, signRect)) {
+		fragColor = mix(fragColor, signRect.color, signRect.color.a);
+	}
+
+	vec2 mixDotSpace = fragCoord;
+	mixDotSpace -= mixDot.pos;
+	mixDotSpace = rotate2D(mixDot.rot) * mixDotSpace;
+	mixDotSpace = scale2D(mixDot.scale) * mixDotSpace;
+	mixDotSpace += mixDot.pos;
+	if (false ^^ CircleCheck(mixDotSpace, mixDot)) {
+		fragColor = mixDot.color;
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>

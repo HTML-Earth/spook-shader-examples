@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <!--
+
+    @license twgl.js Copyright (c) 2015, Gregg Tavares All Rights Reserved.
+    Available via the MIT license.
+    see: http://github.com/greggman/twgl.js for details
+
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <title>Cookie.spook</title>
+    <style>
+      body {
+          margin: 0;
+      }
+      canvas {
+          display: block;
+          width: 100vw;
+          height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+  </body>
+
+
+  <!-- VERTEX -->
+  
+  <script id="vs" type="notjs">
+#version 300 es
+in vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+  </script>
+
+
+
+  <!-- FRAGMENT -->
+
+  <script id="fs" type="notjs">#version 300 es
+// Cookie.spook
+// Compiled with Spook Compiler 
+// https://github.com/HTML-Earth/Spook-Compiler
+
+precision mediump float;
+
+out vec4 fragColor;
+
+uniform vec2 iResolution;
+uniform float iTime;
+
+const float PI = 3.1415926535897932384626433832795;
+
+struct Circle {
+	float radius;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct CircleGradient {
+	float innerRadius;
+	float outerRadius;
+	vec4 innerColor;
+	vec4 outerColor;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+};
+struct Triangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Rectangle {
+	vec2 size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+struct Square {
+	float size;
+	vec2 pos;
+	vec2 scale;
+	float rot;
+	vec4 color;
+};
+
+bool CircleCheck(vec2 point, Circle circle);
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient);
+bool TriangleCheck(vec2 point, Triangle tri);
+bool RectangleCheck(vec2 point, Rectangle rec);
+bool SquareCheck(vec2 point, Square sqr);
+mat2 rotate2D(float angle);
+mat2 scale2D(vec2 scale);
+
+void main() {
+vec2 fragCoord = gl_FragCoord.xy;
+	// Variable Declarations
+	float cookieRadius = iResolution.y/4.0;
+
+	vec4 shadowColor = vec4(0.0, 0.0, 0.0, 0.699999988079071);
+
+	vec2 center = vec2(iResolution.x/2.0, iResolution.y/2.0);
+
+	vec2 shadowPos = vec2(sin(iTime*PI*0.5)*cookieRadius*-0.5, cos(iTime*PI*0.5)*cookieRadius*-0.20000000298023224-cookieRadius*0.10000000149011612);
+
+	vec4 cookieColor = vec4(0.6499999761581421, 0.4000000059604645, 0.20000000298023224, 1.0);
+
+	vec4 cookieColorBright = vec4(0.699999988079071, 0.44999998807907104, 0.25, 1.0);
+
+	vec4 cookieColorDark = vec4(0.44999998807907104, 0.30000001192092896, 0.10000000149011612, 1.0);
+
+	vec4 bright = vec4(1.0, 1.0, 1.0, 0.10000000149011612);
+
+	vec4 chipColor = vec4(0.20000000298023224, 0.10000000149011612, 0.0, 1.0);
+
+	float lightWiden = max(cos(iTime*PI*0.5)*-2.0+0.75, -1.0);
+
+	vec2 lightScale = vec2(lightWiden+2.0, 1.5);
+
+	vec4 lightColor = vec4(1.0, 1.0, 0.0, max(cos(iTime*PI*0.5)*0.5+0.10000000149011612, 0.0));
+
+	vec4 bgColor = vec4(1.0, 1.0, 0.0, max(cos(iTime*PI*0.5)*-0.20000000298023224+0.10000000149011612, 0.0));
+
+	// Object Declarations
+	Circle cookieShadow = Circle(
+		cookieRadius,
+		vec2(iResolution.x/2.0+sin(iTime*PI*0.5)*cookieRadius*-0.5+0.0, iResolution.y/2.0+cos(iTime*PI*0.5)*cookieRadius*-0.20000000298023224-cookieRadius*0.10000000149011612+0.0),
+		vec2(1.0, 0.800000011920929),
+		0.0,
+		vec4(shadowColor)
+	);
+
+	CircleGradient cookieGradient = CircleGradient(
+		cookieRadius*0.25,
+		cookieRadius*1.5,
+		vec4(cookieColorBright),
+		vec4(cookieColorDark),
+		vec2(sin(iTime*PI*0.5)*cookieRadius*0.5+iResolution.x/2.0+0.0, cos(iTime*PI*0.5)*cookieRadius*0.5+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	CircleGradient cookieGradientTop = CircleGradient(
+		cookieRadius*0.800000011920929,
+		cookieRadius*1.0,
+		vec4(cookieColor),
+		vec4(cookieColorDark),
+		vec2(0.0+0.0+iResolution.x/2.0+0.0, cookieRadius*0.10000000149011612+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	CircleGradient cookieGradientTop2 = CircleGradient(
+		0.0,
+		cookieRadius*1.0,
+		vec4(bright),
+		vec4(0.0, 0.0, 0.0, 0.0),
+		vec2(0.0+0.0+iResolution.x/2.0+0.0, max(0.0, cos(iTime*PI*0.5))*cookieRadius*0.5+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	Square chip1 = Square(
+		cookieRadius*0.2800000011920929,
+		vec2(cookieRadius*0.30000001192092896+0.0+iResolution.x/2.0+0.0, cookieRadius*0.5+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(0.699999988079071, 1.0),
+		25.0,
+		vec4(chipColor)
+	);
+
+	Square chip2 = Square(
+		cookieRadius*0.25999999046325684,
+		vec2(cookieRadius*-0.44999998807907104+0.0+iResolution.x/2.0+0.0, cookieRadius*-0.4000000059604645+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 0.699999988079071),
+		-15.0,
+		vec4(chipColor)
+	);
+
+	Square chip3 = Square(
+		cookieRadius*0.25999999046325684,
+		vec2(cookieRadius*0.44999998807907104+0.0+iResolution.x/2.0+0.0, cookieRadius*-0.4000000059604645+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 0.699999988079071),
+		67.0,
+		vec4(chipColor)
+	);
+
+	Square chip4 = Square(
+		cookieRadius*0.25999999046325684,
+		vec2(cookieRadius*-0.30000001192092896+0.0+iResolution.x/2.0+0.0, cookieRadius*0.30000001192092896+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 0.699999988079071),
+		67.0,
+		vec4(chipColor)
+	);
+
+	Square chip5 = Square(
+		cookieRadius*0.20000000298023224,
+		vec2(cookieRadius*-0.10000000149011612+0.0+iResolution.x/2.0+0.0, cookieRadius*-0.15000000596046448+cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 0.699999988079071),
+		10.0,
+		vec4(chipColor)
+	);
+
+	Circle cookieBright = Circle(
+		cookieRadius*0.8999999761581421,
+		vec2(0.0+iResolution.x/2.0+0.0, cookieRadius*0.10000000149011612+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		mod(iTime*90.0, 360.0),
+		vec4(cookieColorBright)
+	);
+
+	Circle cookie = Circle(
+		cookieRadius,
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 0.800000011920929),
+		0.0,
+		vec4(cookieColor)
+	);
+
+	CircleGradient lightGradient = CircleGradient(
+		0.0,
+		cookieRadius*5.0,
+		vec4(lightColor),
+		vec4(0.0, 0.0, 0.0, 0.0),
+		vec2(0.0+iResolution.x/2.0+0.0, cookieRadius*3.0+iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0
+	);
+
+	Triangle holyLight = Triangle(
+		vec2(cookieRadius*6.0, cookieRadius*6.0),
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(lightWiden+2.0, 1.5),
+		sin(iTime*PI*0.5)*60.0,
+		vec4(0.0, 0.0, 0.0, 0.0)
+	);
+
+	Rectangle lightRect = Rectangle(
+		vec2(iResolution.x, iResolution.y),
+		vec2(iResolution.x/2.0+0.0, iResolution.y/2.0+0.0),
+		vec2(1.0, 1.0),
+		0.0,
+		vec4(bgColor)
+	);
+
+	// Checks and Drawing
+	fragColor = vec4(0.5, 0.5, 0.5, 1.0);
+
+
+	vec2 cookieShadowSpace = fragCoord;
+	cookieShadowSpace -= cookieShadow.pos;
+	cookieShadowSpace = rotate2D(cookieShadow.rot) * cookieShadowSpace;
+	cookieShadowSpace = scale2D(cookieShadow.scale) * cookieShadowSpace;
+	cookieShadowSpace += cookieShadow.pos;
+	if (false ^^ CircleCheck(cookieShadowSpace, cookieShadow)) {
+		fragColor = mix(fragColor, cookieShadow.color, cookieShadow.color.a);
+	}
+
+	vec2 cookieSpace = fragCoord;
+	cookieSpace -= cookie.pos;
+	cookieSpace = rotate2D(cookie.rot) * cookieSpace;
+	cookieSpace = scale2D(cookie.scale) * cookieSpace;
+	cookieSpace += cookie.pos;
+	if (false ^^ CircleCheck(cookieSpace, cookie)) {
+		fragColor = mix(fragColor, cookie.color, cookie.color.a);
+		float cookieGradient_blendValue = CircleGradientBlend(cookieSpace, cookieGradient);
+		vec4 cookieGradient_blendedGradientColor = mix(cookieGradient.innerColor, cookieGradient.outerColor, cookieGradient_blendValue);
+		fragColor = mix(fragColor, cookieGradient_blendedGradientColor, cookieGradient_blendedGradientColor.a);
+	}
+
+	vec2 cookieBrightSpace = cookieSpace;
+	cookieBrightSpace -= cookieBright.pos;
+	cookieBrightSpace = rotate2D(cookieBright.rot) * cookieBrightSpace;
+	cookieBrightSpace = scale2D(cookieBright.scale) * cookieBrightSpace;
+	cookieBrightSpace += cookieBright.pos;
+	if (false ^^ CircleCheck(cookieBrightSpace, cookieBright)) {
+		fragColor = mix(fragColor, cookieBright.color, cookieBright.color.a);
+		float cookieGradientTop_blendValue = CircleGradientBlend(cookieBrightSpace, cookieGradientTop);
+		vec4 cookieGradientTop_blendedGradientColor = mix(cookieGradientTop.innerColor, cookieGradientTop.outerColor, cookieGradientTop_blendValue);
+		fragColor = mix(fragColor, cookieGradientTop_blendedGradientColor, cookieGradientTop_blendedGradientColor.a);
+		float cookieGradientTop2_blendValue = CircleGradientBlend(cookieBrightSpace, cookieGradientTop2);
+		vec4 cookieGradientTop2_blendedGradientColor = mix(cookieGradientTop2.innerColor, cookieGradientTop2.outerColor, cookieGradientTop2_blendValue);
+		fragColor = mix(fragColor, cookieGradientTop2_blendedGradientColor, cookieGradientTop2_blendedGradientColor.a);
+	}
+
+	vec2 chip1Space = cookieBrightSpace;
+	chip1Space -= chip1.pos;
+	chip1Space = rotate2D(chip1.rot) * chip1Space;
+	chip1Space = scale2D(chip1.scale) * chip1Space;
+	chip1Space += chip1.pos;
+	if (false ^^ SquareCheck(chip1Space, chip1)) {
+		fragColor = mix(fragColor, chip1.color, chip1.color.a);
+	}
+
+	vec2 chip2Space = cookieBrightSpace;
+	chip2Space -= chip2.pos;
+	chip2Space = rotate2D(chip2.rot) * chip2Space;
+	chip2Space = scale2D(chip2.scale) * chip2Space;
+	chip2Space += chip2.pos;
+	if (false ^^ SquareCheck(chip2Space, chip2)) {
+		fragColor = mix(fragColor, chip2.color, chip2.color.a);
+	}
+
+	vec2 chip3Space = cookieBrightSpace;
+	chip3Space -= chip3.pos;
+	chip3Space = rotate2D(chip3.rot) * chip3Space;
+	chip3Space = scale2D(chip3.scale) * chip3Space;
+	chip3Space += chip3.pos;
+	if (false ^^ SquareCheck(chip3Space, chip3)) {
+		fragColor = mix(fragColor, chip3.color, chip3.color.a);
+	}
+
+	vec2 chip4Space = cookieBrightSpace;
+	chip4Space -= chip4.pos;
+	chip4Space = rotate2D(chip4.rot) * chip4Space;
+	chip4Space = scale2D(chip4.scale) * chip4Space;
+	chip4Space += chip4.pos;
+	if (false ^^ SquareCheck(chip4Space, chip4)) {
+		fragColor = mix(fragColor, chip4.color, chip4.color.a);
+	}
+
+	vec2 chip5Space = cookieBrightSpace;
+	chip5Space -= chip5.pos;
+	chip5Space = rotate2D(chip5.rot) * chip5Space;
+	chip5Space = scale2D(chip5.scale) * chip5Space;
+	chip5Space += chip5.pos;
+	if (false ^^ SquareCheck(chip5Space, chip5)) {
+		fragColor = mix(fragColor, chip5.color, chip5.color.a);
+	}
+
+	vec2 holyLightSpace = fragCoord;
+	holyLightSpace -= holyLight.pos;
+	holyLightSpace = rotate2D(holyLight.rot) * holyLightSpace;
+	holyLightSpace = scale2D(holyLight.scale) * holyLightSpace;
+	holyLightSpace += holyLight.pos;
+	if (false ^^ TriangleCheck(holyLightSpace, holyLight)) {
+		fragColor = mix(fragColor, holyLight.color, holyLight.color.a);
+		float lightGradient_blendValue = CircleGradientBlend(holyLightSpace, lightGradient);
+		vec4 lightGradient_blendedGradientColor = mix(lightGradient.innerColor, lightGradient.outerColor, lightGradient_blendValue);
+		fragColor = mix(fragColor, lightGradient_blendedGradientColor, lightGradient_blendedGradientColor.a);
+	}
+
+	vec2 lightRectSpace = fragCoord;
+	lightRectSpace -= lightRect.pos;
+	lightRectSpace = rotate2D(lightRect.rot) * lightRectSpace;
+	lightRectSpace = scale2D(lightRect.scale) * lightRectSpace;
+	lightRectSpace += lightRect.pos;
+	if (false ^^ RectangleCheck(lightRectSpace, lightRect)) {
+		fragColor = mix(fragColor, lightRect.color, lightRect.color.a);
+	}
+
+}
+
+bool CircleCheck(vec2 point, Circle circle){
+	return (distance(point, circle.pos) < circle.radius);
+}
+
+float CircleGradientBlend(vec2 point, CircleGradient circleGradient){
+	return smoothstep(circleGradient.innerRadius, circleGradient.outerRadius, distance(point, circleGradient.pos));
+}
+
+bool TriangleCheck(vec2 point, Triangle tri){
+	if (point.y < tri.pos.y - (tri.size.y / 2.) || point.y > tri.pos.y + (tri.size.y / 2.))
+		return false;
+
+	vec2 pTop = vec2(tri.pos.x, tri.pos.y + (tri.size.y / 2.));
+	
+	if (point.x < tri.pos.x) {
+		vec2 pLeft = vec2(tri.pos.x - (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pTop.y - pLeft.y) / (pTop.x - pLeft.x);
+		return (point.y < angle * (point.x-pLeft.x) + pLeft.y);
+	}
+	else {
+		vec2 pRight = vec2(tri.pos.x + (tri.size.x / 2.), tri.pos.y - (tri.size.y / 2.));
+		float angle = (pRight.y - pTop.y) / (pRight.x - pTop.x);
+		return (point.y < angle * (point.x-pTop.x) + pTop.y);
+	}
+}
+
+bool RectangleCheck(vec2 point, Rectangle rec){
+	return (point.x > rec.pos.x - rec.size.x * 0.5 && point.x < rec.pos.x + rec.size.x * 0.5 &&
+			point.y > rec.pos.y - rec.size.y * 0.5 && point.y < rec.pos.y + rec.size.y * 0.5);
+}
+
+bool SquareCheck(vec2 point, Square sqr){
+	return (point.x > sqr.pos.x - sqr.size * 0.5 && point.x < sqr.pos.x + sqr.size * 0.5 &&
+			point.y > sqr.pos.y - sqr.size * 0.5 && point.y < sqr.pos.y + sqr.size * 0.5);
+}
+
+mat2 rotate2D(float angle){
+	float rad = -angle * PI / 180.0;
+	return mat2(cos(rad), -sin(rad), sin(rad), cos(rad));
+}
+
+mat2 scale2D(vec2 scale){
+	return mat2(1.0/scale.x, 0.0, 0.0, 1.0/scale.y);
+}
+
+
+  </script>
+  
+  
+  <!-- TWGL -->
+  
+  <script src="js/twgl.min.js"></script>
+  <script>
+    "use strict";
+    const gl = twgl.getContext(document.getElementById("c"));
+    console.log("using:" + gl.getParameter(gl.VERSION));  // eslint-disable-line
+    if (!twgl.isWebGL2(gl)) {
+        alert("Sorry, this shader requires WebGL 2.0");  // eslint-disable-line
+    }
+    
+    const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
+
+    const arrays = {
+      position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+    };
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+    requestAnimationFrame(render);
+    
+    function render(time) {
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+      const uniforms = {
+        iTime: time * 0.001,
+        iResolution: [gl.canvas.width, gl.canvas.height],
+      };
+
+      gl.useProgram(programInfo.program);
+      twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+      twgl.setUniforms(programInfo, uniforms);
+      twgl.drawBufferInfo(gl, bufferInfo);
+
+      requestAnimationFrame(render);
+    }
+  </script>
+</html>
